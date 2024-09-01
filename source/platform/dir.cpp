@@ -2,6 +2,8 @@
 // The code below, although inspired by RTL version 1.5 from BC++ 4.52,
 // has been written from scratch.
 
+#if !defined(TV_NO_FILESYSTEM)
+
 #include <internal/findfrst.h>
 #include <internal/pathconv.h>
 #include <dir.h>
@@ -220,3 +222,7 @@ int getcurdir(int drive, char *direc) noexcept
     return -1;
 #endif
 }
+
+
+#endif // TV_NO_FILESYSTEM
+

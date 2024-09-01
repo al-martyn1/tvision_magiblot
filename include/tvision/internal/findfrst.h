@@ -1,6 +1,8 @@
 #ifndef TVISION_FINDFRST_H
 #define TVISION_FINDFRST_H
 
+#if !defined(TV_NO_FILESYSTEM)
+
 #include <tvision/tv.h>
 #include <string>
 #include <vector>
@@ -83,5 +85,7 @@ private:
 };
 
 } // namespace tvision
+
+#endif // TV_NO_FILESYSTEM
 
 #endif // TVISION_FINDFRST_H

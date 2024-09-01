@@ -1,6 +1,8 @@
 #include <internal/findfrst.h>
 #include <internal/pathconv.h>
 
+#if !defined(TV_NO_FILESYSTEM)
+
 #define SPECIAL_BITS (_A_SUBDIR|_A_HIDDEN|_A_SYSTEM)
 
 namespace tvision
@@ -308,3 +310,6 @@ void FindFirstRec::cvtTime(const WIN32_FIND_DATAW *findData, struct find_t *file
 #endif // _WIN32
 
 } // namespace tvision
+
+#endif // TV_NO_FILESYSTEM
+

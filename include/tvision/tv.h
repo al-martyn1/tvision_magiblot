@@ -20,10 +20,13 @@
 #if !defined( _WIN32 )
 #define __cdecl
 #define __stdcall
+#endif
+
+#if !defined( _WIN32 ) && !defined( TV_BARE_METAL )
 #define _TV_UNIX
 #endif
 
-#endif
+#endif // !defined( __BORLANDC__ )
 
 #if defined( __FLAT__ )
 #define _NEAR

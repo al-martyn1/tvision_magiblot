@@ -87,44 +87,68 @@ endif()
 
 # Dependencies
 
+if (TV_BARE_METAL)
+    set(TV_NO_NCURSES ON)
+    set(TV_NO_FILESYSTEM ON)
+    set(TV_NO_LOCALE_SUPPORT ON)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE TV_BARE_METAL)
+endif()
+
+if (TV_NO_NCURSES)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE TV_NO_FILESYSTEM)
+endif()
+
+if (TV_NO_FILESYSTEM)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE TV_NO_FILESYSTEM)
+endif()
+
+if (TV_NO_LOCALE_SUPPORT)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE TV_NO_LOCALE_SUPPORT)
+endif()
+
+
 if (NOT WIN32)
-    # ncursesw
-    find_library(NCURSESW ncursesw)
-    if (NOT NCURSESW AND APPLE)
-        # macOS has no ncursesw by default
-        find_library(NCURSESW ncurses)
-    endif()
-    if (NOT NCURSESW)
-        tv_message(FATAL_ERROR "Library 'ncursesw' not found")
-    else()
-        tv_message(STATUS "Found 'ncursesw': ${NCURSESW}")
-    endif()
-    # Some distributions place ncurses.h under a separate directory.
-    find_path(NCURSESW_INCLUDE "ncursesw/ncurses.h")
-    if (NCURSESW_INCLUDE)
-        target_include_directories(${PROJECT_NAME} PRIVATE "${NCURSESW_INCLUDE}/ncursesw")
-    else()
-        find_path(NCURSESW_INCLUDE "ncurses.h")
-        if (NCURSESW_INCLUDE)
-            target_include_directories(${PROJECT_NAME} PRIVATE "${NCURSESW_INCLUDE}")
+
+    if (NOT TV_NO_NCURSES)
+        # ncursesw
+        find_library(NCURSESW ncursesw)
+        if (NOT NCURSESW AND APPLE)
+            # macOS has no ncursesw by default
+            find_library(NCURSESW ncurses)
+        endif()
+        if (NOT NCURSESW)
+            tv_message(FATAL_ERROR "Library 'ncursesw' not found")
         else()
-            tv_message(FATAL_ERROR "'ncursesw' development headers not found")
+            tv_message(STATUS "Found 'ncursesw': ${NCURSESW}")
+        endif()
+        # Some distributions place ncurses.h under a separate directory.
+        find_path(NCURSESW_INCLUDE "ncursesw/ncurses.h")
+        if (NCURSESW_INCLUDE)
+            target_include_directories(${PROJECT_NAME} PRIVATE "${NCURSESW_INCLUDE}/ncursesw")
+        else()
+            find_path(NCURSESW_INCLUDE "ncurses.h")
+            if (NCURSESW_INCLUDE)
+                target_include_directories(${PROJECT_NAME} PRIVATE "${NCURSESW_INCLUDE}")
+            else()
+                tv_message(FATAL_ERROR "'ncursesw' development headers not found")
+            endif()
+        endif()
+    
+        target_compile_definitions(${PROJECT_NAME} PRIVATE HAVE_NCURSES)
+        target_link_libraries(${PROJECT_NAME} PUBLIC ${NCURSESW})
+    
+        # tinfow, dependency of ncurses. Often provided as 'tinfo', but we also need
+        # to link the 'w' version when both are available.
+        find_library(TINFOW tinfow)
+        if (NOT TINFOW)
+            find_library(TINFOW tinfo)
+        endif()
+        if (TINFOW)
+            tv_message(STATUS "Found 'tinfow': ${TINFOW}")
+            target_link_libraries(${PROJECT_NAME} PUBLIC ${TINFOW})
         endif()
     endif()
 
-    target_compile_definitions(${PROJECT_NAME} PRIVATE HAVE_NCURSES)
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${NCURSESW})
-
-    # tinfow, dependency of ncurses. Often provided as 'tinfo', but we also need
-    # to link the 'w' version when both are available.
-    find_library(TINFOW tinfow)
-    if (NOT TINFOW)
-        find_library(TINFOW tinfo)
-    endif()
-    if (TINFOW)
-        tv_message(STATUS "Found 'tinfow': ${TINFOW}")
-        target_link_libraries(${PROJECT_NAME} PUBLIC ${TINFOW})
-    endif()
 
     # gpm
     if (TV_BUILD_USING_GPM)
@@ -143,6 +167,7 @@ if (NOT WIN32)
             target_link_libraries(${PROJECT_NAME} PUBLIC ${GPM})
         endif()
     endif()
+
 endif()
 
 tv_set_output_dir(${PROJECT_NAME})

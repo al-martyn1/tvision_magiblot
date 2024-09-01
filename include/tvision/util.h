@@ -101,12 +101,14 @@ int vsnprintf( char _FAR *buffer, size_t size, const char _FAR *format,
 
 #elif !defined( _WIN32 )
 
+#if 0
 int stricmp( const char *s1, const char *s2 ) noexcept;
 int strnicmp( const char *s1, const char *s2, size_t maxlen ) noexcept;
 char *strupr(char *s) noexcept;
 char *itoa( int value, char *buffer, int radix ) noexcept;
 char *ltoa( long value, char *buffer, int radix ) noexcept;
 char *ultoa( ulong value, char *buffer, int radix ) noexcept;
+#endif
 
 #endif // __BORLANDC__
 
