@@ -407,6 +407,8 @@ public:
 
     virtual void endModal( ushort command );
     virtual ushort execute();
+    virtual ushort executeInit();
+    virtual ushort executePoll();
 
     TAttrPair getColor( ushort color ) noexcept;
     virtual TPalette& getPalette() const;
@@ -846,6 +848,8 @@ public:
 
     ushort execView( TView *p ) noexcept;
     virtual ushort execute();
+    virtual ushort executeInit();
+    virtual ushort executePoll();
     virtual void awaken();
 
     void insertView( TView *p, TView *Target ) noexcept;

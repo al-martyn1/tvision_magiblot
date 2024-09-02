@@ -185,6 +185,22 @@ ushort TGroup::execute()
     return endState;
 }
 
+ushort TGroup::executeInit()
+{
+    endState = 0;
+    return endState;
+}
+
+ushort TGroup::executePoll()
+{
+    TEvent e;
+    getEvent( e );
+    handleEvent( e );
+    if( e.what != evNothing )
+        eventError( e );
+    return endState;
+}
+
 ushort TGroup::execView( TView* p ) noexcept
 {
     if( p == 0 )

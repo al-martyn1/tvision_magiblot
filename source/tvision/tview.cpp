@@ -447,6 +447,16 @@ ushort  TView::execute()
     return cmCancel;
 }
 
+ushort TView::executeInit()
+{
+    return cmCancel;
+}
+
+ushort TView::executePoll()
+{
+    return cmCancel;
+}
+
 Boolean TView::focus()
 {
     Boolean result = True;
