@@ -96,9 +96,9 @@ inline void TCellChar::moveStr(TStringView mbc, bool wide)
         memset(this, 0, sizeof(*this));
         switch (mbc.size())
         {
-            case 4: _text[3] = mbc[3];
-            case 3: _text[2] = mbc[2];
-            case 2: _text[1] = mbc[1];
+            case 4: _text[3] = mbc[3]; _ATTR_FALLTHROUGH
+            case 3: _text[2] = mbc[2]; _ATTR_FALLTHROUGH
+            case 2: _text[1] = mbc[1]; _ATTR_FALLTHROUGH
             case 1: _text[0] = mbc[0];
         }
         _flags |= -int(wide) & fWide;
@@ -131,9 +131,9 @@ constexpr inline void TCellChar::appendZeroWidth(TStringView mbc)
             _text[0] = ' ';
         switch (mbc.size())
         {
-            case 4: _text[sz + 3] = mbc[3];
-            case 3: _text[sz + 2] = mbc[2];
-            case 2: _text[sz + 1] = mbc[1];
+            case 4: _text[sz + 3] = mbc[3]; _ATTR_FALLTHROUGH
+            case 3: _text[sz + 2] = mbc[2]; _ATTR_FALLTHROUGH
+            case 2: _text[sz + 1] = mbc[1]; _ATTR_FALLTHROUGH
             case 1: _text[sz] = mbc[0];
         }
     }

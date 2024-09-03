@@ -26,7 +26,26 @@
 #define _TV_UNIX
 #endif
 
+
+// https://en.cppreference.com/w/cpp/preprocessor/replace#Predefined_macros
+// Also interesting - __STDC_HOSTED__ (C++11)
+
+#if !defined(_ATTR_FALLTHROUGH)
+    #if __cplusplus < 201703L
+        #define _ATTR_FALLTHROUGH    /* C++ < 0x17 */
+    #else 
+        #define _ATTR_FALLTHROUGH    [[fallthrough]];  /* C++ >= 0x17 */
+    #endif
+#endif
+
+#else // !defined( __BORLANDC__ )
+
+#if !defined(_ATTR_FALLTHROUGH)
+    #define _ATTR_FALLTHROUGH    /* Borland C++ */
+#endif
+
 #endif // !defined( __BORLANDC__ )
+
 
 #if defined( __FLAT__ )
 #define _NEAR
