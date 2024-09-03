@@ -27,8 +27,9 @@
 #endif
 
 
-// https://en.cppreference.com/w/cpp/preprocessor/replace#Predefined_macros
-// Also interesting - __STDC_HOSTED__ (C++11)
+// Macro Symbol Index - https://en.cppreference.com/w/cpp/symbol_index/macro
+// Predefined_macros  - https://en.cppreference.com/w/cpp/preprocessor/replace#Predefined_macros
+// Also interesting   - __STDC_HOSTED__ (C++11)
 
 #if !defined(_ATTR_FALLTHROUGH)
     #if __cplusplus < 201703L
