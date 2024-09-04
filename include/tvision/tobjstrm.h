@@ -76,7 +76,7 @@ struct fLink
 #if defined( Uses_TStreamable ) && !defined( __TStreamable )
 #define __TStreamable
 
-class TStreamable
+class _FAR TStreamable
 {
 
     friend class pstream;
@@ -151,7 +151,7 @@ private:
 #if defined( Uses_TStreamableTypes ) && !defined( __TStreamableTypes )
 #define __TStreamableTypes
 
-class TStreamableTypes : private TNSSortedCollection
+class _FAR TStreamableTypes : private TNSSortedCollection
 {
 
 public:
@@ -364,7 +364,7 @@ protected:
 
 class _FAR TStreamableClass;
 
-class ipstream : virtual public pstream
+class _FAR ipstream : virtual public pstream
 {
 
 public:
@@ -426,7 +426,7 @@ private:
 
 class _FAR TStreamableClass;
 
-class opstream : virtual public pstream
+class _FAR opstream : virtual public pstream
 {
 
 public:
