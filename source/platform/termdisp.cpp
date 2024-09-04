@@ -66,20 +66,20 @@ TermCap TerminalDisplay::getCapabilities() noexcept
 
     if (!colortermStr.empty())
     {
-        auto pos = termStr.find("256color", 0);
-        if (pos!=termStr.npos)
+        auto pos = colortermStr.find("256color", 0);
+        if (pos!=colortermStr.npos)
         {
             term256c = true;
         }
 
-        pos = termStr.find("truecolor", 0);
-        if (pos!=termStr.npos)
+        pos = colortermStr.find("truecolor", 0);
+        if (pos!=colortermStr.npos)
         {
             term24bit = true;
         }
     
-        pos = termStr.find("24bit", 0);
-        if (pos!=termStr.npos)
+        pos = colortermStr.find("24bit", 0);
+        if (pos!=colortermStr.npos)
         {
             term24bit = true;
         }
@@ -87,13 +87,13 @@ TermCap TerminalDisplay::getCapabilities() noexcept
     }
 
 
-    if (term256c)
-    {
-        termcap.colors = Indexed256;
-    }
-    else if (term24bit)
+    if (term24bit)
     {
         termcap.colors = Direct;
+    }
+    else if (term256c)
+    {
+        termcap.colors = Indexed256;
     }
 #endif
 
