@@ -12,12 +12,16 @@
 #include <string.h>
 #include <tvision/compat/borland/iosfwd.h>
 
+#include <cstddef>
+
 #ifdef TVISION_STL
 #include <string>
+#include <iterator>
 
 #if __cplusplus >= 201703L || __cpp_lib_string_view
 #include <string_view>
 #endif
+
 #endif // TVISION_STL
 
 class TStringView
@@ -35,6 +39,26 @@ class TStringView
     size_t len;
 
 public:
+
+    constexpr static const size_t npos = (size_t)-1;
+
+#ifdef TVISION_STL
+    using traits_type            = std::char_traits<char>;
+#endif
+    using value_type             = char;
+    using size_type              = std::size_t;
+    using difference_type        = std::ptrdiff_t;
+    using pointer                = char*;
+    using const_pointer          = const char*;
+    using reference              = char&;
+    using const_reference        = const char&;
+    using iterator               = char*;
+    using const_iterator         = const char*;
+#ifdef TVISION_STL
+    using reverse_iterator       = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+#endif
+
 
     constexpr TStringView();
 #if defined(TVISION_STL) && (__cplusplus >= 201703L || __cpp_lib_constexpr_char_traits)
@@ -68,6 +92,16 @@ public:
     constexpr const char _FAR * cbegin() const;
     constexpr const char _FAR * end() const;
     constexpr const char _FAR * cend() const;
+
+// #ifdef TVISION_STL
+    constexpr size_t find( TStringView v, size_t pos = 0 ) const noexcept;
+    constexpr size_t find( char ch, size_t pos = 0 ) const noexcept;
+    constexpr size_t find( const char* s, size_t pos, size_t count ) const;
+#if defined(TVISION_STL) && (__cplusplus >= 201703L || __cpp_lib_constexpr_char_traits)
+    constexpr
+#endif
+    size_t find( const char* s, size_type pos = 0 ) const;
+// #endif
 
 };
 
@@ -244,5 +278,69 @@ namespace std {
 } // namespace std
 
 #endif // TVISION_STL && __cplusplus >= 201103L
+
+
+
+//#ifdef TVISION_STL
+
+// https://en.cppreference.com/w/cpp/algorithm/search
+
+template<class ForwardIt1, class ForwardIt2>
+constexpr
+ForwardIt1 search_impl( ForwardIt1 first, ForwardIt1 last
+                      , ForwardIt2 s_first, ForwardIt2 s_last
+                      )
+{
+    while (true)
+    {
+        ForwardIt1 it = first;
+        for (ForwardIt2 s_it = s_first; ; ++it, ++s_it)
+        {
+            if (s_it == s_last)
+                return first;
+            if (it == last)
+                return last;
+            if (!(*it == *s_it))
+                break;
+        }
+        ++first;
+    }
+}
+
+
+inline constexpr size_t TStringView::find( const TStringView v, size_t pos ) const noexcept
+{
+    if (pos>=size())
+        return npos;
+
+    auto itRes = search_impl(cbegin()+pos, cend(), v.cbegin(), v.cend());
+    if (itRes==cend())
+        return npos;
+
+    return (size_t)(itRes-cbegin());
+}
+
+inline constexpr size_t TStringView::find( const char* s, size_t pos, size_t count ) const
+{
+    return find( TStringView(s, count), pos);
+}
+
+inline constexpr size_t TStringView::find( char ch, size_t pos ) const noexcept
+{
+    return find( &ch, pos, 1 );
+}
+
+inline 
+#if defined(TVISION_STL) && (__cplusplus >= 201703L || __cpp_lib_constexpr_char_traits)
+    constexpr
+#endif
+size_t TStringView::find( const char* s, size_t pos ) const
+{
+    return find( TStringView(s), pos);
+}
+
+//#endif
+
+
 
 #endif // TVISION_TSTRVIEW_H
