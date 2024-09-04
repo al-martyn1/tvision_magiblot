@@ -4,10 +4,6 @@
 #include <internal/termdisp.h>
 #include <internal/linuxcon.h>
 #include <internal/getenv.h>
-//
-#if !defined( __BORLANDC__ )
-#include <string_view>
-#endif
 
 namespace tvision
 {
@@ -35,8 +31,8 @@ TermCap TerminalDisplay::getCapabilities() noexcept
     // COLORTERM in Debian is empty
 
     // Changing detection of terminal capabilities by environment vars
-    auto termStr      = getEnv<std::string_view>("TERM");
-    auto colortermStr = getEnv<std::string_view>("COLORTERM");
+    auto termStr      = getEnv<TStringView>("TERM");
+    auto colortermStr = getEnv<TStringView>("COLORTERM");
 
     bool term256c  = false;
     bool term24bit = false;
