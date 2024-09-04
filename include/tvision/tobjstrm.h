@@ -79,9 +79,9 @@ struct fLink
 class _FAR TStreamable
 {
 
-    friend class pstream;
-    friend class opstream;
-    friend class ipstream;
+    friend class _FAR pstream;
+    friend class _FAR opstream;
+    friend class _FAR ipstream;
 
 private:
 
@@ -122,8 +122,8 @@ class TStreamableClass
 {
 
     friend TStreamableTypes;
-    friend opstream;
-    friend ipstream;
+    friend _FAR opstream;
+    friend _FAR ipstream;
 
 public:
 
@@ -255,7 +255,7 @@ private:
 class TPReadObjects : public TNSCollection
 {
 
-    friend ipstream;
+    friend _FAR ipstream;
 
 public:
 
