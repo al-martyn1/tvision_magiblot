@@ -29,6 +29,31 @@
         #define UMBA_TOKENIZER_TRIE_NODE_LEVEL_FIELD_DISABLE
     #endif
 
+    #if !defined(UMBA_TOKENIZER_TRIE_INDEX_TYPE_COMPACT)
+        #define  UMBA_TOKENIZER_TRIE_INDEX_TYPE_COMPACT
+    #endif
+
+    #if !defined(UMBA_TOKENIZER_TOKEN_TYPE_COMPACT)
+        #define  UMBA_TOKENIZER_TOKEN_TYPE_COMPACT
+    #endif
+
+    #if !defined(UMBA_TOKENIZER_PAYLOAD_TYPE_COMPACT)
+        #define  UMBA_TOKENIZER_PAYLOAD_TYPE_COMPACT
+    #endif
+
+#endif
+
+
+#if defined(UMBA_TOKENIZER_TRIE_NODE_EXTRA_FIELDS_DISABLE)
+
+    #if !defined(UMBA_TOKENIZER_TRIE_NODE_PAYLOAD_EXTRA_FIELD_DISABLE)
+        #define  UMBA_TOKENIZER_TRIE_NODE_PAYLOAD_EXTRA_FIELD_DISABLE
+    #endif
+
+    #if !defined(UMBA_TOKENIZER_TRIE_NODE_LEVEL_FIELD_DISABLE)
+        #define  UMBA_TOKENIZER_TRIE_NODE_LEVEL_FIELD_DISABLE
+    #endif
+
 #endif
 
 
@@ -38,10 +63,12 @@
 
 // std::size_t https://stackoverflow.com/questions/36594569/which-header-should-i-include-for-size-t
 
+
+
 #if !defined(UMBA_TOKENIZER_TRIE_INDEX_TYPE)
     #if !defined(__cplusplus)
 
-        #if defined(UMBA_TOKENIZER_TYPES_COMPACT)
+        #if defined(UMBA_TOKENIZER_TRIE_INDEX_TYPE_COMPACT)
             #define UMBA_TOKENIZER_TRIE_INDEX_TYPE  uint_least16_t
         #else
             #define UMBA_TOKENIZER_TRIE_INDEX_TYPE  size_t
@@ -49,7 +76,7 @@
 
     #else
 
-        #if defined(UMBA_TOKENIZER_TYPES_COMPACT)
+        #if defined(UMBA_TOKENIZER_TRIE_INDEX_TYPE_COMPACT)
             #define UMBA_TOKENIZER_TRIE_INDEX_TYPE  std::uint_least16_t
         #else
             #define UMBA_TOKENIZER_TRIE_INDEX_TYPE  std::size_t
@@ -71,7 +98,9 @@
 #if !defined(UMBA_TOKENIZER_TOKEN_TYPE)
     #if !defined(__cplusplus)
 
-        #if defined(UMBA_TOKENIZER_TYPES_COMPACT)
+        #if defined(UMBA_TOKENIZER_TOKEN_TYPE_SUPER_COMPACT)
+            #define UMBA_TOKENIZER_TOKEN_TYPE  uint_least8_t
+        #elif defined(UMBA_TOKENIZER_TOKEN_TYPE_COMPACT)
             #define UMBA_TOKENIZER_TOKEN_TYPE  uint_least16_t
         #else
             #define UMBA_TOKENIZER_TOKEN_TYPE  size_t
@@ -79,7 +108,9 @@
 
     #else
 
-        #if defined(UMBA_TOKENIZER_TYPES_COMPACT)
+        #if defined(UMBA_TOKENIZER_TOKEN_TYPE_SUPER_COMPACT)
+            #define UMBA_TOKENIZER_TOKEN_TYPE  std::uint_least8_t
+        #elif defined(UMBA_TOKENIZER_TOKEN_TYPE_COMPACT)
             #define UMBA_TOKENIZER_TOKEN_TYPE  std::uint_least16_t
         #else
             #define UMBA_TOKENIZER_TOKEN_TYPE  std::size_t
@@ -97,7 +128,7 @@
 #if !defined(UMBA_TOKENIZER_PAYLOAD_TYPE)
     #if !defined(__cplusplus)
 
-        #if defined(UMBA_TOKENIZER_TYPES_COMPACT)
+        #if defined(UMBA_TOKENIZER_PAYLOAD_TYPE_COMPACT)
             #define UMBA_TOKENIZER_PAYLOAD_TYPE  uint_least16_t
         #else
             #define UMBA_TOKENIZER_PAYLOAD_TYPE  size_t
@@ -105,7 +136,7 @@
 
     #else
 
-        #if defined(UMBA_TOKENIZER_TYPES_COMPACT)
+        #if defined(UMBA_TOKENIZER_PAYLOAD_TYPE_COMPACT)
             #define UMBA_TOKENIZER_PAYLOAD_TYPE  std::uint_least16_t
         #else
             #define UMBA_TOKENIZER_PAYLOAD_TYPE  std::size_t
@@ -138,9 +169,11 @@ typedef struct tag_umba_tokenizer_trie_node
     UMBA_TOKENIZER_TRIE_INDEX_TYPE       lookupChunkStartIndex; /* Одно и то же значение для всех элементов lookupChunk'а */
     UMBA_TOKENIZER_TRIE_INDEX_TYPE       lookupChunkSize      ; /* Одно и то же значение для всех элементов lookupChunk'а */
     UMBA_TOKENIZER_TRIE_INDEX_TYPE       childsIndex          ;
-    UMBA_TOKENIZER_TOKEN_TYPE            token                ; // Токен или символ
     UMBA_TOKENIZER_PAYLOAD_TYPE          payload              ; // Полезная нагрузка
+#if !defined(UMBA_TOKENIZER_TRIE_NODE_PAYLOAD_EXTRA_FIELD_DISABLE)
     UMBA_TOKENIZER_PAYLOAD_FLAGS_TYPE    payloadExtra         ; // Пользовательские флаги или данные, влезает указатель
+#endif
+    UMBA_TOKENIZER_TOKEN_TYPE            token                ; // Токен или символ
 
 #if !defined(UMBA_TOKENIZER_TRIE_NODE_LEVEL_FIELD_DISABLE)
     UMBA_TOKENIZER_TRIE_INDEX_TYPE       level                ; // Нужно, чтобы делать красивый граф таблицы trie
@@ -156,20 +189,46 @@ typedef struct tag_umba_tokenizer_trie_node
 // Compact mode    : Trie size : 32 items, 448 bytes
 // Compact no flags: Trie size : 32 items, 384 bytes
 
+
+#if defined(UMBA_TOKENIZER_TRIE_NODE_PAYLOAD_EXTRA_FIELD_DISABLE)
+    #define UMBA_TOKENIZER_TRIE_NODE_PAYLOAD_EXTRA_FIELD_INITIALIZER_LIST_INIT(p)
+#else
+    #define UMBA_TOKENIZER_TRIE_NODE_PAYLOAD_EXTRA_FIELD_INITIALIZER_LIST_INIT(p)  , (p)
+#endif
+
+#if defined(UMBA_TOKENIZER_TRIE_NODE_LEVEL_FIELD_DISABLE)
+    #define UMBA_TOKENIZER_TRIE_NODE_LEVEL_FIELD_INITIALIZER_LIST_INIT(l)
+#else
+    #define UMBA_TOKENIZER_TRIE_NODE_LEVEL_FIELD_INITIALIZER_LIST_INIT(l)  , (l)
+#endif
+
 static inline
 void umba_tokenizer_trie_node_init_make_uninitialized(umba_tokenizer_trie_node *pNode)
 {
+    *pNode = umba_tokenizer_trie_node{ UMBA_TOKENIZER_TRIE_INDEX_INVALID
+                                     , UMBA_TOKENIZER_TRIE_INDEX_INVALID
+                                     , 0
+                                     , UMBA_TOKENIZER_TRIE_INDEX_INVALID
+                                     , UMBA_TOKENIZER_PAYLOAD_INVALID
+                                     /*,*/ UMBA_TOKENIZER_TRIE_NODE_PAYLOAD_EXTRA_FIELD_INITIALIZER_LIST_INIT(0)
+                                     , UMBA_TOKENIZER_TOKEN_INVALID
+                                     /*,*/ UMBA_TOKENIZER_TRIE_NODE_LEVEL_FIELD_INITIALIZER_LIST_INIT(0)
+                                     };
+
+#if 0
     pNode->parentNodeIndex       = UMBA_TOKENIZER_TRIE_INDEX_INVALID;
     pNode->lookupChunkStartIndex = UMBA_TOKENIZER_TRIE_INDEX_INVALID;
     pNode->lookupChunkSize       = 0;
     pNode->childsIndex           = UMBA_TOKENIZER_TRIE_INDEX_INVALID;
+    pNode->payload               = UMBA_TOKENIZER_PAYLOAD_INVALID;
+#if !defined(UMBA_TOKENIZER_TRIE_NODE_PAYLOAD_EXTRA_FIELD_DISABLE)
+    pNode->payloadExtra          = 0;
+#endif
+    pNode->token                 = UMBA_TOKENIZER_TOKEN_INVALID;
 #if !defined(UMBA_TOKENIZER_TRIE_NODE_LEVEL_FIELD_DISABLE)
     pNode->level                 = 0;
 #endif
-    pNode->token                 = UMBA_TOKENIZER_TOKEN_INVALID;
-    pNode->payload               = UMBA_TOKENIZER_PAYLOAD_INVALID;
-#if !defined(UMBA_TOKENIZER_NO_PAYLOAD_FLAGS)
-    pNode->payloadExtra          = 0;
+
 #endif
 }
 
@@ -181,7 +240,27 @@ namespace umba {
 namespace tokenizer {
 
 
+//----------------------------------------------------------------------------
+using  trie_index_type                                     = UMBA_TOKENIZER_TRIE_INDEX_TYPE;
+inline constexpr const trie_index_type trie_index_invalid  = UMBA_TOKENIZER_TRIE_INDEX_INVALID;
+//inline constexpr const trie_index_type trie_index_initial  = UMBA_TOKENIZER_TRIE_INDEX_INITIAL;
+
+//----------------------------------------------------------------------------
+using  token_type                                          = UMBA_TOKENIZER_TOKEN_TYPE;
+inline constexpr const token_type token_id_invalid         = UMBA_TOKENIZER_TOKEN_INVALID;
+
+//----------------------------------------------------------------------------
+using  payload_type                                        = UMBA_TOKENIZER_PAYLOAD_TYPE;
+inline constexpr const payload_type payload_invalid        = UMBA_TOKENIZER_PAYLOAD_INVALID;
+
+//----------------------------------------------------------------------------
+using payload_flags_type                                   = UMBA_TOKENIZER_PAYLOAD_FLAGS_TYPE;
+
+//----------------------------------------------------------------------------
 using TrieNode = umba_tokenizer_trie_node;
+
+//----------------------------------------------------------------------------
+
 
 template<typename ContainerType>
 trie_index_type tokenTrieFindNext(const ContainerType &tokenTrie, trie_index_type curIndex, token_type tk)
