@@ -1,12 +1,12 @@
 #pragma once
 
-#if !defined(__cplusplus)
-    #include <stddef.h>
-    #include <stdint.h>
-#else
-    #include <cstddef>
-    #include <cstdint>
-#endif
+// #if !defined(__cplusplus)
+//     #include <stddef.h>
+//     #include <stdint.h>
+// #else
+//     #include <cstddef>
+//     #include <cstdint>
+// #endif
 
 #if defined(UMBA_TOKENIZER_TYPES_COMPACT)
 
@@ -77,9 +77,9 @@
     #else
 
         #if defined(UMBA_TOKENIZER_TRIE_INDEX_TYPE_COMPACT)
-            #define UMBA_TOKENIZER_TRIE_INDEX_TYPE  std::uint_least16_t
+            #define UMBA_TOKENIZER_TRIE_INDEX_TYPE  ::std::uint_least16_t
         #else
-            #define UMBA_TOKENIZER_TRIE_INDEX_TYPE  std::size_t
+            #define UMBA_TOKENIZER_TRIE_INDEX_TYPE  ::std::size_t
         #endif
 
     #endif
@@ -109,11 +109,11 @@
     #else
 
         #if defined(UMBA_TOKENIZER_TOKEN_TYPE_SUPER_COMPACT)
-            #define UMBA_TOKENIZER_TOKEN_TYPE  std::uint_least8_t
+            #define UMBA_TOKENIZER_TOKEN_TYPE  ::std::uint_least8_t
         #elif defined(UMBA_TOKENIZER_TOKEN_TYPE_COMPACT)
-            #define UMBA_TOKENIZER_TOKEN_TYPE  std::uint_least16_t
+            #define UMBA_TOKENIZER_TOKEN_TYPE  ::std::uint_least16_t
         #else
-            #define UMBA_TOKENIZER_TOKEN_TYPE  std::size_t
+            #define UMBA_TOKENIZER_TOKEN_TYPE  ::std::size_t
         #endif
 
     #endif
@@ -137,9 +137,9 @@
     #else
 
         #if defined(UMBA_TOKENIZER_PAYLOAD_TYPE_COMPACT)
-            #define UMBA_TOKENIZER_PAYLOAD_TYPE  std::uint_least16_t
+            #define UMBA_TOKENIZER_PAYLOAD_TYPE  ::std::uint_least16_t
         #else
-            #define UMBA_TOKENIZER_PAYLOAD_TYPE  std::size_t
+            #define UMBA_TOKENIZER_PAYLOAD_TYPE  ::std::size_t
         #endif
 
     #endif
@@ -151,10 +151,10 @@
 
 
 #if !defined(UMBA_TOKENIZER_PAYLOAD_FLAGS_TYPE)
-    #if !defined(__cplusplus)
+    #if !defined(__cplusplus) || defined(__GNUC__) /* there is a problem in GCC with std::uintptr_t */
         #define UMBA_TOKENIZER_PAYLOAD_FLAGS_TYPE  uintptr_t
     #else
-        #define UMBA_TOKENIZER_PAYLOAD_FLAGS_TYPE  std::uintptr_t
+        #define UMBA_TOKENIZER_PAYLOAD_FLAGS_TYPE  ::std::uintptr_t
     #endif
 #endif
 
@@ -233,6 +233,11 @@ void umba_tokenizer_trie_node_init_make_uninitialized(umba_tokenizer_trie_node *
 }
 
 
+#if !defined(UMBA_TOKEN_TRIE_FIND_NEXT_BINARY_SEARCH_CHUNK_SIZE_LIMIT)
+    #define UMBA_TOKEN_TRIE_FIND_NEXT_BINARY_SEARCH_CHUNK_SIZE_LIMIT  4u
+#endif
+
+
 #if defined(__cplusplus)
 
 // umba::tokenizer::
@@ -289,11 +294,15 @@ trie_index_type tokenTrieFindNext(const ContainerType &tokenTrie, trie_index_typ
         }
 
         lookupChunkStartIdx = tokenTrie[curIndex].childsIndex;
-        UMBA_ASSERT(lookupChunkStartIdx<tokenTrie.size());
+        #ifdef UMBA_ASSERT
+            UMBA_ASSERT(lookupChunkStartIdx<tokenTrie.size());
+        #endif
         lookupChunkSize = tokenTrie[lookupChunkStartIdx].lookupChunkSize;
     }
 
-    UMBA_ASSERT((lookupChunkStartIdx+lookupChunkSize)<=tokenTrie.size());
+    #ifdef UMBA_ASSERT
+        UMBA_ASSERT((lookupChunkStartIdx+lookupChunkSize)<=tokenTrie.size());
+    #endif
 
     // Двоичный поиск
     // https://codelessons.dev/ru/binarnyj-poisk-po-massivu-c/
@@ -308,7 +317,7 @@ trie_index_type tokenTrieFindNext(const ContainerType &tokenTrie, trie_index_typ
     {
         TrieNode cmpNode;
         cmpNode.token = tk;
-        auto resIt = std::lower_bound( &tokenTrie[lookupChunkStartIdx]
+        auto resIt = ::std::lower_bound( &tokenTrie[lookupChunkStartIdx]
                                      , &tokenTrie[lookupChunkStartIdx+lookupChunkSize]
                                      , cmpNode
                                      , [](const TrieNode &tn1, const TrieNode &tn2)
@@ -388,8 +397,10 @@ void tokenTrieBackTrace(const ContainerType &tokenTrie, trie_index_type curIndex
 {
     while(curIndex!=trie_index_invalid)
     {
-        UMBA_ASSERT(curIndex<tokenTrie.size());
-        handler(tokenTrie[curIndex].token);
+        #ifdef UMBA_ASSERT
+            UMBA_ASSERT(curIndex<tokenTrie.size());
+        #endif
+        handler(tokenTrie[curIndex].token, tokenTrie[curIndex]);
         curIndex = tokenTrie[curIndex].parentNodeIndex;
     }
 }

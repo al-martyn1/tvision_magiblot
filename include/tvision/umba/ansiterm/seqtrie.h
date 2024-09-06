@@ -1,5 +1,5 @@
 static const
-std::array<umba::tokenizer::TrieNode, 73> ansiTerminalSequencesTrie
+::std::array<umba::tokenizer::TrieNode, 73> ansiTerminalSequencesTrie
 {
 
 // parendIdx, lookupStartIdx, chunkSize, childsIdx[, extra], tokenId[, level]

@@ -4,7 +4,11 @@
 //     #define Uses_TKeys
 // #endif
 
+
 #include "../../tkeys.h"
+
+//
+#include <array>
 
 namespace tvision
 {
