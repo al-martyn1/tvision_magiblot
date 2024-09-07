@@ -10,8 +10,11 @@
 //
 #include <array>
 
-namespace tvision
-{
+// tvision::umba::ansiterm::
+namespace tvision{
+namespace umba{
+namespace ansiterm{
+
 
 struct TerminalAsciiCharInfo
 {
@@ -169,5 +172,8 @@ const std::array<TerminalAsciiCharInfo, 128>& getTerminalAsciiCharInfo()
 }
 
 
+} // namespace ansiterm
+} // namespace umba
 } // namespace tvision
+
 

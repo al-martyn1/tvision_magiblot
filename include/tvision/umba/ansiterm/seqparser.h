@@ -13,8 +13,9 @@
 #include <algorithm>
 
 
-// tvision::ansiterm::
+// tvision::umba::ansiterm::
 namespace tvision{
+namespace umba{
 namespace ansiterm{
 
 
@@ -189,8 +190,19 @@ class AnsiTerminalKeySequenceParser
                 TrieIndexType nextTrieIndex = trieFindNext(trieIndex, ch); // lokking for maximal len sequence while valid
                 if (nextTrieIndex!=umba::tokenizer::trie_index_invalid)
                 {
-                    ++seqLen;
+                    const auto &trieNode = getAnsiTerminalSequencesTrie()[nextTrieIndex];
+                    if (trieNode.childsIndex==umba::tokenizer::trie_index_invalid) // Is node a sequence final node?
+                    {
+                        if (trieNode.payload!=umba::tokenizer::payload_invalid)
+                        {
+                            validKeyHandler((ushort)trieNode.payload, getControlKeyStateForKnownKeyCode((ushort)trieNode.payload));
+                            resetState();
+                            return true;
+                        }
+                    }
+
                     trieIndex = nextTrieIndex;
+                    ++seqLen;
                     break;
                 }
                 
@@ -307,6 +319,10 @@ public:
                 invalidSequenceHandler(&pData[i], 1);
                 resetState();
             }
+            else if (pData[i]==(uchar)'~')
+            {
+                putTimeout(); // ~ mark sequence end, put "timeout" event to finalize sequence
+            }
         }
     }
 
@@ -405,5 +421,6 @@ public:
 
 
 } // namespace ansiterm
+} // namespace umba
 } // namespace tvision
 
