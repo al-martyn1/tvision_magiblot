@@ -20,14 +20,22 @@ struct TConstantName
 #define TVISION_UMBA_ANSITERM_DEF_CONSTANT_NAME(c)  { c, #c }
 
 
+
 template<typename StreamType>
 void ansiTermPrintControlKeyCode(StreamType &os, ushort controlKeyState)
 {
-    static ushort      flags[] = { 0x0001    , 0x0002   , 0x0004     , 0x0008    , 0x0010    };
-    static const char* names[] = { "RightAlt", "LeftAlt", "RightCtrl", "LeftCtrl", "Shift" };
+#if !defined( __FLAT__ )
+    constexpr static const size_t size = 4;
+    static const ushort  flags[size] = { 0x0008, 0x0004, 0x0001     , 0x0002      };
+    static const char*   names[size] = { "Alt" , "Ctrl", "LeftShift", "RightShift" };
+#else
+    constexpr static const size_t size = 5;
+    static const ushort  flags[size] = { 0x0001    , 0x0002   , 0x0004     , 0x0008    , 0x0010    };
+    static const char*   names[size] = { "RightAlt", "LeftAlt", "RightCtrl", "LeftCtrl", "Shift" };
+#endif
 
     bool bFirst = true;
-    for(auto i=0; i!=5; ++i)
+    for(auto i=0; i!=size; ++i)
     {
         if ((controlKeyState&flags[i])!=0)
         {
