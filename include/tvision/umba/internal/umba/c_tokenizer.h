@@ -160,6 +160,7 @@
 
 
 
+
 #if defined(UMBA_TOKENIZER_TYPES_COMPACT)
     #include "pushpack1.h"
 #endif
@@ -179,10 +180,31 @@ typedef struct tag_umba_tokenizer_trie_node
     UMBA_TOKENIZER_TRIE_INDEX_TYPE       level                ; // Нужно, чтобы делать красивый граф таблицы trie
 #endif
 
+
 } umba_tokenizer_trie_node;
 #if defined(UMBA_TOKENIZER_TYPES_COMPACT)
     #include "packpop.h"
 #endif
+
+
+#if defined(__cplusplus)
+
+// Compare nodes by token only
+
+inline
+bool operator<(const umba_tokenizer_trie_node &tn1, const umba_tokenizer_trie_node &tn2)
+{
+         return tn1.token < tn2.token;
+}
+
+inline
+bool operator>(const umba_tokenizer_trie_node &tn1, const umba_tokenizer_trie_node &tn2)
+{
+         return tn1.token > tn2.token;
+}
+
+#endif
+
 
 
 // Standard mode   : Trie size : 32 items, 1024 bytes
@@ -267,6 +289,28 @@ using TrieNode = umba_tokenizer_trie_node;
 //----------------------------------------------------------------------------
 
 
+
+//----------------------------------------------------------------------------
+struct TrieNodeTokenLess
+{
+    bool operator()(const TrieNode &tn1, const TrieNode &tn2) const
+     {
+         return tn1.token < tn2.token;
+     }
+
+};
+
+//----------------------------------------------------------------------------
+struct TrieNodeTokenGreater
+{
+    bool operator()(const TrieNode &tn1, const TrieNode &tn2) const
+     {
+         return tn1.token > tn2.token;
+     }
+
+};
+
+//----------------------------------------------------------------------------
 template<typename ContainerType>
 trie_index_type tokenTrieFindNext(const ContainerType &tokenTrie, trie_index_type curIndex, token_type tk)
 {
@@ -317,18 +361,15 @@ trie_index_type tokenTrieFindNext(const ContainerType &tokenTrie, trie_index_typ
     {
         TrieNode cmpNode;
         cmpNode.token = tk;
-        auto resIt = ::std::lower_bound( &tokenTrie[lookupChunkStartIdx]
-                                       , &tokenTrie[lookupChunkStartIdx+lookupChunkSize]
-                                       , cmpNode
-                                       , [](const TrieNode &tn1, const TrieNode &tn2)
-                                         {
-                                             return tn1.token < tn2.token;
-                                         }
-                                       );
-        if (resIt==&tokenTrie[lookupChunkStartIdx+lookupChunkSize] || resIt->token!=tk)
+        const TrieNode *pB = &tokenTrie[lookupChunkStartIdx];
+        const TrieNode *pE = &tokenTrie[lookupChunkStartIdx+lookupChunkSize];
+
+        auto resIt = ::std::lower_bound( pB, pE, cmpNode ); // , TrieNodeTokenLess()
+
+        if (resIt==pE || resIt->token!=tk)
             return trie_index_invalid; // Не нашли, обломс
 
-        return resIt-&tokenTrie[lookupChunkStartIdx];
+        return resIt - &tokenTrie[0]; // &tokenTrie[lookupChunkStartIdx]; !!! Bug was here
     }
     #endif
 
