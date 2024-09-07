@@ -62,18 +62,23 @@ btoa_lut_t btoa_lut = init_btoa_lut();
 
 #include <strings.h>
 
+#ifndef TV_DISABLE_TV_PLATFORM_STRINGS_STRICMP
 int stricmp( const char *s1, const char *s2 ) noexcept
 {
     return strcasecmp(s1, s2);
 }
+#endif
 
+#ifndef TV_DISABLE_TV_PLATFORM_STRINGS_STRNICMP
 int strnicmp( const char *s1, const char *s2, size_t maxlen ) noexcept
 {
     return strncasecmp(s1, s2, maxlen);
 }
+#endif
 
 #include <cctype>
 
+#ifndef TV_DISABLE_TV_PLATFORM_STRINGS_STRUPR
 char *strupr(char *s) noexcept
 {
     char* p = s;
@@ -81,6 +86,7 @@ char *strupr(char *s) noexcept
         p++;
     return s;
 }
+#endif
 
 // Quick and dirty implementation of itoa, ltoa, ultoa based on sprintf.
 // It won't provide the expected results in some cases, but at least will not
@@ -98,20 +104,25 @@ static inline char printfFmt(int radix)
     }
 }
 
+#ifndef TV_DISABLE_TV_PLATFORM_STRINGS_ITOA
 char *itoa( int value, char *buffer, int radix ) noexcept
 {
     char format[] = {'%', printfFmt(radix), '\0'};
     sprintf(buffer, format, value);
     return buffer;
 }
+#endif
 
+#ifndef TV_DISABLE_TV_PLATFORM_STRINGS_LTOA
 char *ltoa( long value, char *buffer, int radix ) noexcept
 {
     char format[] = {'%', 'l', printfFmt(radix), '\0'};
     sprintf(buffer, format, value);
     return buffer;
 }
+#endif
 
+#ifndef TV_DISABLE_TV_PLATFORM_STRINGS_ULTOA
 char *ultoa( unsigned long value, char *buffer, int radix ) noexcept
 {
     if (radix == 10)
@@ -122,5 +133,6 @@ char *ultoa( unsigned long value, char *buffer, int radix ) noexcept
     }
     return ltoa(value, buffer, radix);
 }
+#endif
 
 #endif // _MSC_VER
