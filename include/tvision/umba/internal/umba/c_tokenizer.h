@@ -318,13 +318,13 @@ trie_index_type tokenTrieFindNext(const ContainerType &tokenTrie, trie_index_typ
         TrieNode cmpNode;
         cmpNode.token = tk;
         auto resIt = ::std::lower_bound( &tokenTrie[lookupChunkStartIdx]
-                                     , &tokenTrie[lookupChunkStartIdx+lookupChunkSize]
-                                     , cmpNode
-                                     , [](const TrieNode &tn1, const TrieNode &tn2)
-                                       {
-                                           return tn1.token < tn2.token;
-                                       }
-                                     );
+                                       , &tokenTrie[lookupChunkStartIdx+lookupChunkSize]
+                                       , cmpNode
+                                       , [](const TrieNode &tn1, const TrieNode &tn2)
+                                         {
+                                             return tn1.token < tn2.token;
+                                         }
+                                       );
         if (resIt==&tokenTrie[lookupChunkStartIdx+lookupChunkSize] || resIt->token!=tk)
             return trie_index_invalid; // Не нашли, обломс
 
