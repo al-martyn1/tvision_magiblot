@@ -21,6 +21,8 @@ class StdioCtl final
         bool owning {false};
     } cn[3];
     bool ownsConsole {false};
+#elif defined(TV_BARE_METAL)
+    // Nothing for bare metal
 #else
     int fds[2] {-1, -1};
     FILE *files[2] {nullptr, nullptr};
@@ -46,12 +48,20 @@ public:
     static void destroyInstance() noexcept;
 
     void write(const char *data, size_t bytes) const noexcept;
+#if defined(TV_BARE_METAL)
+    // For bare metal platform there is no standard implementation of write/read methods
+    // User must implement it in his project itself
+    void read(char *data, size_t bytesToRead, size_t *pBytesReaded) const noexcept;
+#else
     TPoint getSize() const noexcept;
     TPoint getFontSize() const noexcept;
+#endif
 
 #ifdef _WIN32
     HANDLE in() const noexcept { return cn[input].handle; }
     HANDLE out() const noexcept { return cn[activeOutput].handle; }
+#elif defined(TV_BARE_METAL)
+    // Nothing for bare metal
 #else
     int in() const noexcept { return fds[0]; }
     int out() const noexcept { return fds[1]; }

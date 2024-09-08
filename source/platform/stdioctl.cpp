@@ -24,7 +24,22 @@ void StdioCtl::destroyInstance() noexcept
 
 } // namespace tvision
 
-#ifdef _TV_UNIX
+#if defined(TV_BARE_METAL)
+
+namespace tvision
+{
+
+StdioCtl::StdioCtl() noexcept
+{
+}
+
+StdioCtl::~StdioCtl()
+{
+}
+
+} // namespace tvision
+
+#elif defined(_TV_UNIX)
 
 #include <unistd.h>
 #include <fcntl.h>
