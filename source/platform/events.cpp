@@ -19,7 +19,31 @@ namespace tvision
 /////////////////////////////////////////////////////////////////////////
 // SysManualEvent
 
-#ifdef _TV_UNIX
+#if defined(TV_BARE_METAL)
+
+int TBareMetalEventHandle::s_handles[s_totalHandles] = {-1};
+
+bool SysManualEvent::createHandle(TBareMetalEventHandle::SysHandle &hEvent) noexcept
+{
+    return (hEvent = TBareMetalEventHandle::create()) != TBareMetalEventHandle::invalidHandleValue;
+}
+
+SysManualEvent::~SysManualEvent()
+{
+    TBareMetalEventHandle::close(state);
+}
+
+void SysManualEvent::signal() noexcept
+{
+    TBareMetalEventHandle::signal(state);
+}
+
+void SysManualEvent::clear() noexcept
+{
+    TBareMetalEventHandle::clear(state);
+}
+
+#elif defined(_TV_UNIX)
 
 bool SysManualEvent::createHandle(int (&fds)[2]) noexcept
 {
@@ -50,7 +74,7 @@ void SysManualEvent::clear() noexcept
     while (read(fds[0], &c, sizeof(char)) == 0);
 }
 
-#else
+#else // _WIN32
 
 bool SysManualEvent::createHandle(HANDLE &hEvent) noexcept
 {
@@ -124,7 +148,44 @@ bool WakeUpEventSource::getEvent(TEvent &ev) noexcept
 /////////////////////////////////////////////////////////////////////////
 // EventWaiter
 
-#ifdef _TV_UNIX
+#if defined(TV_BARE_METAL)
+
+static void pollHandles(PollData &pd, int ms) noexcept
+{
+    // enum PollState : uint8_t
+    // {
+    //     psNothing,
+    //     psReady,
+    //     psDisconnect,
+    // };
+    //  
+    // struct PollData
+    // {
+    //     std::vector<SysHandle> handles;
+    //     std::vector<PollState> states;
+
+    auto &handles = pd.handles;
+    auto &states = pd.states;
+    if (handles.size() == 0)
+    {
+        // Ignoring timeout
+        return; //TODO: !!! Dirty implementation, need rewrite 
+    }
+    else
+    {
+        // Single time check for each "handle"
+        // Ignoring timeout
+        for(auto i=0u; i!=handles.size(); ++i)
+        {
+            if (TBareMetalEventHandle::signaled(handles[i]))
+            {
+                states[i] = psReady;
+            }
+        }
+    }
+}
+
+#elif defined(_TV_UNIX)
 
 static bool fdEmpty(int fd) noexcept
 {

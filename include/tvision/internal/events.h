@@ -14,7 +14,108 @@
 namespace tvision
 {
 
-#ifdef _WIN32
+#if defined(TV_BARE_METAL)
+
+//TODO: !!! Dirty implementation, need rewrite
+
+class TBareMetalEventHandle
+{
+    constexpr static const size_t s_totalHandles = 32;
+    // -1 - unassigned, 0 - non-signaled, 1 - signaled
+    static int s_handles[s_totalHandles]; // = {-1};
+
+public:
+
+    using SysHandle = size_t;
+
+    constexpr static const size_t invalidHandleValue = (size_t)-1;
+
+
+    static SysHandle create() noexcept
+    {
+        for(auto i=0u; i!=s_totalHandles; ++i)
+        {
+            if (s_handles[i]<0)
+            {
+                s_handles[i] = 0;
+                return i;
+            }
+        }
+
+        return invalidHandleValue;
+    }
+
+    static bool valid(SysHandle h) noexcept
+    {
+        if (h<s_totalHandles)
+        {
+            return s_handles[h]>=0;
+        }
+
+        return false;
+    }
+
+    static bool close(SysHandle h) noexcept
+    {
+        if (h<s_totalHandles)
+        {
+            s_handles[h] = -1;
+            return true;
+        }
+        else
+        {
+            //TODO: !!! Dirty implementation, need rewrite (assert here?)
+            return false;
+        }
+    }
+
+    static void signal(SysHandle h) noexcept
+    {
+        if (h<s_totalHandles)
+        {
+            s_handles[h] = 1;
+        }
+        else
+        {
+            //TODO: !!! Dirty implementation, need rewrite (assert here?)
+        }
+    }
+
+    static void clear(SysHandle h) noexcept
+    {
+        if (h<s_totalHandles)
+        {
+            s_handles[h] = 0;
+        }
+        else
+        {
+            //TODO: !!! Dirty implementation, need rewrite (assert here?)
+        }
+    }
+
+    static bool signaled(SysHandle h) noexcept
+    {
+        if (h<s_totalHandles)
+        {
+            return s_handles[h]!=0;
+        }
+        else
+        {
+            //TODO: !!! Dirty implementation, need rewrite (assert here?)
+        }
+
+        return true;
+    }
+    
+};
+
+
+#endif
+
+
+#if defined(TV_BARE_METAL)
+using SysHandle = TBareMetalEventHandle::SysHandle;
+#elif defined(_WIN32)
 using SysHandle = HANDLE;
 #else
 using SysHandle = int;
@@ -22,7 +123,11 @@ using SysHandle = int;
 
 struct SysManualEvent
 {
-#ifdef _WIN32
+#if defined(TV_BARE_METAL)
+    //TODO: !!! Dirty implementation, need rewrite
+    using Handle = TBareMetalEventHandle::SysHandle;
+    Handle state;
+#elif defined(_WIN32)
     using Handle = HANDLE;
     Handle hEvent;
 #else
@@ -40,7 +145,9 @@ struct SysManualEvent
 };
 
 inline SysManualEvent::SysManualEvent(Handle aHandle) noexcept :
-#ifdef _WIN32
+#if defined(TV_BARE_METAL)
+    state(aHandle)
+#elif defined(_WIN32)
     hEvent {aHandle}
 #else
     fds {aHandle[0], aHandle[1]}
@@ -50,7 +157,9 @@ inline SysManualEvent::SysManualEvent(Handle aHandle) noexcept :
 
 inline SysHandle SysManualEvent::getWaitableHandle(Handle handle) noexcept
 {
-#ifdef _WIN32
+#if defined(TV_BARE_METAL)
+    return handle;
+#elif defined(_WIN32)
     return handle;
 #else
     return handle[0];
