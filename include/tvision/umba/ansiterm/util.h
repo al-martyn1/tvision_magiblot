@@ -48,11 +48,11 @@ void ansiTermPrintControlKeyCode(StreamType &os, ushort controlKeyState)
     }
 }
 
-template<typename StreamType>
-void ansiTermPrintKeyCode(StreamType &os, ushort keyCode, ushort controlKeyState)
+inline
+const std::array<TConstantName<ushort>, 82>& getAnsiTermKeyConstNames()
 {
-
-    static std::array<TConstantName<ushort>, 82> constNames = {
+    static
+    std::array<TConstantName<ushort>, 82> constNames =   {
     { TVISION_UMBA_ANSITERM_DEF_CONSTANT_NAME(kbCtrlA    )
     , TVISION_UMBA_ANSITERM_DEF_CONSTANT_NAME(kbCtrlB    )
     , TVISION_UMBA_ANSITERM_DEF_CONSTANT_NAME(kbCtrlC    )
@@ -137,6 +137,16 @@ void ansiTermPrintKeyCode(StreamType &os, ushort keyCode, ushort controlKeyState
     , TVISION_UMBA_ANSITERM_DEF_CONSTANT_NAME(kbAltEnd   )
     }
     };
+
+    return constNames;
+
+}
+
+template<typename StreamType>
+void ansiTermPrintKeyCode(StreamType &os, ushort keyCode, ushort controlKeyState)
+{
+
+    const auto &constNames = getAnsiTermKeyConstNames();
 
     for(auto i=0u; i!=constNames.size(); ++i)
     {
