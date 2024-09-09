@@ -37,6 +37,17 @@ StdioCtl::~StdioCtl()
 {
 }
 
+TPoint StdioCtl::getSize() const noexcept
+{
+    return TPoint{40,10};
+}
+
+TPoint StdioCtl::getFontSize() const noexcept
+{
+    return TPoint{8,8};
+}
+
+
 } // namespace tvision
 
 #elif defined(_TV_UNIX)

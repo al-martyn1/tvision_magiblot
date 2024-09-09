@@ -52,8 +52,8 @@ public:
     // For bare metal platform there is no standard implementation of write/read methods
     // User must implement it in his project itself
     void read(char *data, size_t bytesToRead, size_t *pBytesReaded) const noexcept;
-    TPoint getSize() const noexcept { return TPoint{40,10}; }
-    TPoint getFontSize() const noexcept { return TPoint{8,8}; }
+    TPoint getSize() const noexcept; // { return TPoint{40,10}; }
+    TPoint getFontSize() const noexcept; // { return TPoint{8,8}; }
 #else
     TPoint getSize() const noexcept;
     TPoint getFontSize() const noexcept;
