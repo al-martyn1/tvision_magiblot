@@ -29,14 +29,14 @@
 #include <tvision/compat/windows/windows.h>
 #endif
 
-#else
+#else // !__FLAT__
 
 #if !defined( MAKELONG )
 #define MAKELONG(h,l) \
     ((long)(((unsigned)(l)) | (((long)((unsigned)(h))) << 16)))
 #endif
 
-#endif
+#endif // __FLAT__
 
 struct TEvent;
 struct MouseEventType;
@@ -124,9 +124,9 @@ private:
     static size_t eventCount;
     static BOOL getPendingEvent(TEvent &event, Boolean mouse) noexcept;
     static void readEvents() noexcept;
-#endif
+#endif // __BORLANDC__
 
-#else
+#else // !__FLAT__
 
     static ushort *getColorAddr( ushort offset = 0 );
     static ushort *getMonoAddr( ushort offset = 0 );
@@ -148,7 +148,7 @@ private:
     static ushort monoSel;
     static ushort biosSel;
 
-#endif
+#endif // __FLAT__
 
 };
 
@@ -269,7 +269,7 @@ inline BOOL THardwareInfo::setCritErrorHandler( BOOL install ) noexcept
 }
 
 
-#else
+#else // !__FLAT__
 
 inline ushort *THardwareInfo::getColorAddr( ushort offset )
     { return (ushort *) MAKELONG( colorSel, offset ); }
@@ -302,9 +302,9 @@ inline void THardwareInfo::setBiosEquipmentFlag( ushort flag )
 inline Boolean THardwareInfo::getDPMIFlag()
     { return dpmiFlag; }
 
-#endif
+#endif // __FLAT__
 
-#endif  // __THardwareInfo
+#endif  // Uses_THardwareInfo && __THardwareInfo
 
 #if defined( __BORLANDC__ )
 #pragma option -Vo.

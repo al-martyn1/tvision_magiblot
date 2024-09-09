@@ -329,6 +329,7 @@ inline void EventWaiter::getReadyEvent(TEvent &ev) noexcept
     readyEventPresent = false;
 }
 
+//!?
 static int pollDelayMs(time_point now, time_point end) noexcept
 {
     return max(duration_cast<milliseconds>(nanoseconds(999999) + end - now).count(), 0);
@@ -346,7 +347,7 @@ bool EventWaiter::getEvent(TEvent &ev) noexcept
 
 void EventWaiter::waitForEvent(int ms) noexcept
 {
-    auto now = steady_clock::now();
+    auto now = steady_clock::now(); //!?
     const auto end = ms < 0 ? time_point::max() : now + milliseconds(ms);
     while (!hasReadyEvent() && now <= end)
     {

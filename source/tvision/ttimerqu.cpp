@@ -3,7 +3,17 @@
 #include <tvision/tv.h>
 
 #if !defined( __BORLANDC__ )
-#include <chrono>
+
+    #ifndef TV_BARE_METAL
+        #include <chrono>
+    #else
+        namespace tvision {
+        namespace bmtv { // BareMetal TurboVision
+            uint32_t getTickCount(); // User must implement this. Tick count must be in milliseconds
+        } // namespace bmtv
+        } // namespace tvision
+    #endif
+
 #endif
 
 static TTimePoint systemTimeMs()
@@ -13,7 +23,11 @@ static TTimePoint systemTimeMs()
 #elif defined( __BORLANDC__ )
     return GetTickCount();
 #else
-    return GetTickCount64();
+    #ifndef TV_BARE_METAL
+        return GetTickCount64();
+    #else
+        return tvision::bmtv::getTickCount();
+    #endif
 #endif
 }
 
