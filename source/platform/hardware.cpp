@@ -22,7 +22,19 @@ THardwareInfo::THardwareInfo() noexcept
 {
     using namespace tvision;
     pendingEvent = 0;
-    alwaysFlush = getEnv<int>("TVISION_MAX_FPS", 0) < 0;
+    
+    #ifdef TV_BARE_METAL
+        #ifdef TVISION_MAX_FPS
+            int maxFps = TVISION_MAX_FPS;
+        #else
+            int maxFps = 0;
+        #endif
+    #else
+        int maxFps = getEnv<int>("TVISION_MAX_FPS", 0);
+    #endif
+
+    alwaysFlush = maxFps < 0;
+
     platf = new Platform();
 }
 
