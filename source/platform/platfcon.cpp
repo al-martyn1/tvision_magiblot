@@ -9,6 +9,11 @@
 #include <internal/terminal.h>
 #include <internal/getenv.h>
 
+#if defined(TV_BARE_METAL)
+    #include <internal/baremdisp.h>
+    #include <internal/baremcon.h>
+#endif
+
 namespace tvision
 {
 
@@ -18,7 +23,16 @@ namespace tvision
 
 ConsoleStrategy &Platform::createConsole() noexcept
 {
-#ifdef _WIN32
+#if defined(TV_BARE_METAL)
+    auto &io = StdioCtl::getInstance();
+    TerminalDisplay *display;
+    #if !defined(TV_BARE_METAL_DISPLAY_TERMINAL)
+        display = new BareMetalDisplay(io);
+    #else
+        display = new AnsiDisplay<BareMetalDisplay>(io);
+    #endif
+    return BareMetalConsoleStrategy::create(io, displayBuf, *display, *new AnsiTerminalInput(io));
+#elif defined(_WIN32)
     return Win32ConsoleStrategy::create();
 #else
     auto &io = StdioCtl::getInstance();

@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef Uses_THardwareInfo
+    #define Uses_THardwareInfo
+#endif
+
 #include "platform.h"
 //
 #include "../hardware.h"
@@ -77,15 +81,15 @@ class AnsiTerminalInput : public InputStrategy
     void onKeyData(ushort keyCode, ushort controlKeyState)
     {
         //TODO: !!! Dirty. Need to lock queue
-        keysDeque.emplace_back({keyCode, controlKeyState});
+        keysDeque.emplace_back(KeyInfo{keyCode, controlKeyState});
     }
 
     static
-    void onInvalidData(const uchar* pData, size_t size)
+    void onInvalidData(const uchar*  /* pData */ , size_t  /* size */ )
     {
     }
 
-    using Parser = AnsiTerminalKeySequenceParser< void(*)(ushort, ushort), void(*)(const uchar*, size_t) >;
+    using Parser = umba::ansiterm::AnsiTerminalKeySequenceParser< void(*)(ushort, ushort), void(*)(const uchar*, size_t) >;
 
 
     Parser     parser;
@@ -124,7 +128,7 @@ public:
         lastReadTick     = curReadTick;
 
         if (deltaTick>10)
-            parser.putTimeout()
+            parser.putTimeout();
 
         parser.putData((const uchar*)&buf[0], nReaded);
     }
@@ -183,10 +187,10 @@ public:
 
         ev.what = evKeyDown;
 
-        ev.keyDown.keyCode         = KeyInfo.keyCode;
-        ev.keyDown.controlKeyState = KeyInfo.controlKeyState;
+        ev.keyDown.keyCode         = ki.keyCode;
+        ev.keyDown.controlKeyState = ki.controlKeyState;
 
-        ev.keyDown.text[0]    = getKeyText(KeyInfo.keyCode, KeyInfo.controlKeyState);
+        ev.keyDown.text[0]    = getKeyText(ki.keyCode, ki.controlKeyState);
         ev.keyDown.textLength = (ev.keyDown.text[0]==0) ? 0 : 1;
 
         return true;
@@ -199,11 +203,11 @@ public:
         return 0;
     }
 
-    void cursorOn() noexcept override;
+    void cursorOn() noexcept override
     {
     }
 
-    void cursorOff() noexcept override;
+    void cursorOff() noexcept override
     {
     }
 

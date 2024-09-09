@@ -1,8 +1,7 @@
-#ifndef TVISION_TERMDISP_H
-#define TVISION_TERMDISP_H
+#ifndef TVISION_BAREMDISP_H
+#define TVISION_BAREMDISP_H
 
 #include <tvision/tv.h>
-#include <compat/windows/windows.h>
 #include <internal/stdioctl.h>
 #include <internal/termdisp.h>
 
@@ -12,6 +11,32 @@ namespace tvision
 
 class BareMetalDisplay : public TerminalDisplay
 {
+    TPoint size {};
+
+    void initCapabilities() noexcept
+    {
+        termcap = getCapabilities();
+    }
+
+    TermCap getCapabilities() noexcept
+    {
+        TermCap termcap {};
+    
+        int colors = getColorCount();
+        if (colors >= 256*256*256)
+            termcap.colors = Direct;
+        else if (colors >= 256)
+            termcap.colors = Indexed256;
+        else if (colors >= 16)
+            termcap.colors = Indexed16;
+        else if (colors >= 8)
+        {
+            termcap.colors = Indexed8;
+            termcap.quirks |= qfBoldIsBright;
+        }
+        
+        return termcap;
+    }
 
 public:
 
@@ -41,4 +66,4 @@ protected:
 
 } // namespace tvision
 
-#endif // TVISION_TERMDISP_H
+#endif // TVISION_BAREMDISP_H

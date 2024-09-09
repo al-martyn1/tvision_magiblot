@@ -1,8 +1,8 @@
 #pragma once
 
-// #ifndef Uses_TKeys
-//     #define Uses_TKeys
-// #endif
+#ifndef Uses_TKeys
+    #define Uses_TKeys
+#endif
 
 
 #include "../../tkeys.h"
@@ -130,7 +130,7 @@ const std::array<TerminalAsciiCharInfo, 128>& getTerminalAsciiCharInfo()
     , { 0x15,    kbShift ,       0 }  // 0x59  Y  + Shift
     , { 0x2C,    kbShift ,       0 }  // 0x5a  Z  + Shift
     , { 0x1A,          0 ,       0 }  // 0x5b  [  
-    , { 0x2B,          0 ,       0 }  // 0x5c  \  
+    , { 0x2B,          0 ,       0 }  // 0x5c  '\'  
     , { 0x1B,          0 ,       0 }  // 0x5d  ]
     , { 0x07,    kbShift ,       0 }  // 0x5e  ^  + Shift
     , { 0x0C,    kbShift ,       0 }  // 0x5f  _  + Shift

@@ -8,6 +8,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#if defined(TV_BARE_METAL)
+    #include <internal/baremcon.h>
+#endif
+
 namespace tvision
 {
 
@@ -29,7 +33,9 @@ void Platform::initEncodingStuff() noexcept
     static int init = [] ()
     {
         CpTranslator::init();
-#ifdef _WIN32
+#if defined(TV_BARE_METAL)
+        charWidth = &BareMetalConsoleStrategy::charWidth;
+#elif defined(_WIN32)
         setlocale(LC_ALL, ".utf8");
         charWidth = &Win32ConsoleStrategy::charWidth;
 #else

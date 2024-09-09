@@ -10,6 +10,10 @@
 #include <internal/utf8.h>
 #include <wchar.h>
 
+#if defined(TV_BARE_METAL)
+    #include <internal/baremcon.h>
+#endif
+
 namespace ttext
 {
 
@@ -119,7 +123,12 @@ static mbstat_r mbstat(TStringView text) noexcept
 namespace tvision
 {
 
-#ifdef _TV_UNIX
+#if defined(TV_BARE_METAL)
+int BareMetalConsoleStrategy::charWidth(uint32_t wc) noexcept
+{
+    return 1;
+}
+#elif defined(_TV_UNIX)
 int UnixConsoleStrategy::charWidth(uint32_t wc) noexcept
 {
     return wcwidth(wc);
