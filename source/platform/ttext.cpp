@@ -124,7 +124,7 @@ namespace tvision
 {
 
 #if defined(TV_BARE_METAL)
-int BareMetalConsoleStrategy::charWidth(uint32_t wc) noexcept
+int BareMetalConsoleStrategy::charWidth(uint32_t /*wc*/) noexcept
 {
     return 1;
 }
