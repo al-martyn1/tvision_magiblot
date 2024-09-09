@@ -92,7 +92,15 @@ void CpTranslator::init() noexcept
 
     static int init = [] ()
     {
-        TStringView cp = getEnv<TStringView>("TVISION_CODEPAGE", "437");
+        #ifdef TV_BARE_METAL
+            #ifdef TVISION_CODEPAGE
+                TStringView cp = TStringView(TVISION_CODEPAGE);
+            #else
+                TStringView cp = TStringView("437");
+            #endif
+        #else
+            TStringView cp = getEnv<TStringView>("TVISION_CODEPAGE", "437");
+        #endif
         const CpTable *newTable = &tables[0];
 
         for (const CpTable &table : tables)
