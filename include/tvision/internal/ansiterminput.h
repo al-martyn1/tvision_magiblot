@@ -108,12 +108,16 @@ public:
     {
     }
 
-    void pollInput()
+    void pollInput() noexcept override
     {
         //auto curReadTick = THardwareInfo::getTickCount();
         //if ()
         //void putData(const uchar* pData, size_t size)
         //void putTimeout()
+
+        if (keysDeque.size()>32) // Keyboard events queue overflow
+            return;
+
 
         char    buf[32];
         size_t  nReaded = 0;
@@ -139,6 +143,7 @@ public:
     virtual bool hasPendingEvents() noexcept override
     {
         //TODO: !!! Dirty. Need to lock queue
+        pollInput();
         return !keysDeque.empty();
     }
 
@@ -177,6 +182,8 @@ public:
 
     virtual bool getEvent(TEvent &ev) noexcept override
     {
+        pollInput();
+
         if (keysDeque.empty())
             return false;
 

@@ -43,6 +43,12 @@ public:
         //delete &inputState;
     }
 
+    bool isAlive() noexcept override
+    {
+        input.pollInput();
+        return true;
+    }
+
     bool setClipboardText(TStringView) noexcept override
     {
         return false;

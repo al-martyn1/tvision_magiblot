@@ -45,6 +45,8 @@ public:
 
     virtual ~InputStrategy() {}
 
+    virtual void pollInput() noexcept {}
+
     virtual int getButtonCount() noexcept { return 0; }
     virtual void cursorOn() noexcept {}
     virtual void cursorOff() noexcept {}
