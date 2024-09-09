@@ -29,7 +29,15 @@ DisplayBuffer::DisplayBuffer() noexcept :
 {
     instance = this;
     // Check if FPS shall be limited.
-    int fps = getEnv<int>("TVISION_MAX_FPS", defaultFPS);
+    #ifdef TV_BARE_METAL
+        #ifdef TVISION_MAX_FPS
+            int fps = TVISION_MAX_FPS;
+        #else
+            int fps = defaultFPS;
+        #endif
+    #else
+        int fps = getEnv<int>("TVISION_MAX_FPS", defaultFPS);
+    #endif
     limitFPS = (fps > 0);
     if (limitFPS)
         flushDelay = microseconds((int) 1e6/fps);
