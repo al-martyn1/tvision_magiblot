@@ -9,6 +9,34 @@
 #include "../hardware.h"
 #include "../system.h"
 
+
+#if defined(TV_BARE_METAL)
+
+    #if !defined(UMBA_TOKENIZER_TRIE_INDEX_TYPE_COMPACT)
+        #define UMBA_TOKENIZER_TRIE_INDEX_TYPE_COMPACT
+    #endif
+
+    #if !defined(UMBA_TOKENIZER_TOKEN_TYPE_COMPACT)
+        #define  UMBA_TOKENIZER_TOKEN_TYPE_COMPACT
+    #endif
+
+    #if !defined(UMBA_TOKENIZER_PAYLOAD_TYPE_COMPACT)
+        #define  UMBA_TOKENIZER_PAYLOAD_TYPE_COMPACT
+    #endif
+
+    #if !defined(UMBA_TOKENIZER_TRIE_NODE_PAYLOAD_EXTRA_FIELD_DISABLE)
+        #define  UMBA_TOKENIZER_TRIE_NODE_PAYLOAD_EXTRA_FIELD_DISABLE
+    #endif
+
+    #if !defined(UMBA_TOKENIZER_TRIE_NODE_LEVEL_FIELD_DISABLE)
+        #define  UMBA_TOKENIZER_TRIE_NODE_LEVEL_FIELD_DISABLE
+    #endif
+
+#endif
+
+#include <stdint.h>
+#include <cstdint>
+
 //
 #include "../umba/ansiterm/seqparser.h"
 #include "../umba/ansiterm/util.h"
@@ -80,6 +108,9 @@ class AnsiTerminalInput : public InputStrategy
     static
     void onKeyData(ushort keyCode, ushort controlKeyState)
     {
+        if (keysDeque.size()>32) // Keyboard events queue overflow
+            return;
+
         //TODO: !!! Dirty. Need to lock queue
         keysDeque.emplace_back(KeyInfo{keyCode, controlKeyState});
     }
@@ -92,8 +123,8 @@ class AnsiTerminalInput : public InputStrategy
     using Parser = umba::ansiterm::AnsiTerminalKeySequenceParser< void(*)(ushort, ushort), void(*)(const uchar*, size_t) >;
 
 
-    Parser     parser;
-    uint32_t   lastReadTick = 0;
+    Parser       parser;
+    TTimePoint   lastReadTick = 0;
 
 
     //uint32_t THardwareInfo::getTickCount() noexcept;
@@ -115,9 +146,6 @@ public:
         //void putData(const uchar* pData, size_t size)
         //void putTimeout()
 
-        if (keysDeque.size()>32) // Keyboard events queue overflow
-            return;
-
 
         char    buf[32];
         size_t  nReaded = 0;
@@ -127,7 +155,7 @@ public:
         if (!nReaded)
              return;
         
-        auto curReadTick = THardwareInfo::getTickCount();
+        auto curReadTick = THardwareInfo::getTickCountMs();
         auto deltaTick   = curReadTick - lastReadTick;
         lastReadTick     = curReadTick;
 
@@ -182,7 +210,7 @@ public:
 
     virtual bool getEvent(TEvent &ev) noexcept override
     {
-        pollInput();
+        // pollInput();
 
         if (keysDeque.empty())
             return false;
