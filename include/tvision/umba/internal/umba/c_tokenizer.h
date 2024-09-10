@@ -69,7 +69,7 @@
     #if !defined(__cplusplus)
 
         #if defined(UMBA_TOKENIZER_TRIE_INDEX_TYPE_COMPACT)
-            #define UMBA_TOKENIZER_TRIE_INDEX_TYPE  uint_least16_t
+            #define UMBA_TOKENIZER_TRIE_INDEX_TYPE  uint16_t
         #else
             #define UMBA_TOKENIZER_TRIE_INDEX_TYPE  size_t
         #endif
@@ -77,7 +77,7 @@
     #else
 
         #if defined(UMBA_TOKENIZER_TRIE_INDEX_TYPE_COMPACT)
-            #define UMBA_TOKENIZER_TRIE_INDEX_TYPE  ::std::uint_least16_t
+            #define UMBA_TOKENIZER_TRIE_INDEX_TYPE  ::std::uint16_t
         #else
             #define UMBA_TOKENIZER_TRIE_INDEX_TYPE  ::std::size_t
         #endif
@@ -99,9 +99,9 @@
     #if !defined(__cplusplus)
 
         #if defined(UMBA_TOKENIZER_TOKEN_TYPE_SUPER_COMPACT)
-            #define UMBA_TOKENIZER_TOKEN_TYPE  uint_least8_t
+            #define UMBA_TOKENIZER_TOKEN_TYPE  uint8_t
         #elif defined(UMBA_TOKENIZER_TOKEN_TYPE_COMPACT)
-            #define UMBA_TOKENIZER_TOKEN_TYPE  uint_least16_t
+            #define UMBA_TOKENIZER_TOKEN_TYPE  uint16_t
         #else
             #define UMBA_TOKENIZER_TOKEN_TYPE  size_t
         #endif
@@ -109,9 +109,9 @@
     #else
 
         #if defined(UMBA_TOKENIZER_TOKEN_TYPE_SUPER_COMPACT)
-            #define UMBA_TOKENIZER_TOKEN_TYPE  ::std::uint_least8_t
+            #define UMBA_TOKENIZER_TOKEN_TYPE  ::std::uint8_t
         #elif defined(UMBA_TOKENIZER_TOKEN_TYPE_COMPACT)
-            #define UMBA_TOKENIZER_TOKEN_TYPE  ::std::uint_least16_t
+            #define UMBA_TOKENIZER_TOKEN_TYPE  ::std::uint16_t
         #else
             #define UMBA_TOKENIZER_TOKEN_TYPE  ::std::size_t
         #endif
@@ -129,7 +129,7 @@
     #if !defined(__cplusplus)
 
         #if defined(UMBA_TOKENIZER_PAYLOAD_TYPE_COMPACT)
-            #define UMBA_TOKENIZER_PAYLOAD_TYPE  uint_least16_t
+            #define UMBA_TOKENIZER_PAYLOAD_TYPE  uint16_t
         #else
             #define UMBA_TOKENIZER_PAYLOAD_TYPE  size_t
         #endif
@@ -137,7 +137,7 @@
     #else
 
         #if defined(UMBA_TOKENIZER_PAYLOAD_TYPE_COMPACT)
-            #define UMBA_TOKENIZER_PAYLOAD_TYPE  ::std::uint_least16_t
+            #define UMBA_TOKENIZER_PAYLOAD_TYPE  ::std::uint16_t
         #else
             #define UMBA_TOKENIZER_PAYLOAD_TYPE  ::std::size_t
         #endif
