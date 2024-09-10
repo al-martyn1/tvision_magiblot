@@ -4,6 +4,20 @@
 #include <internal/stdioctl.h>
 #include <internal/getenv.h>
 
+
+#ifdef TV_BARE_METAL
+namespace tvision {
+namespace bmtv { // BareMetal TurboVision
+    // User must implement this.
+    void terminalWrite(const char *data, size_t bytes) noexcept;
+    void terminalRead(char *data, size_t bytesToRead, size_t *pBytesReaded) noexcept;
+
+} // namespace bmtv
+} // namespace tvision
+#endif
+
+
+
 namespace tvision
 {
 
@@ -45,6 +59,16 @@ TPoint StdioCtl::getSize() const noexcept
 TPoint StdioCtl::getFontSize() const noexcept
 {
     return TPoint{8,8};
+}
+
+void StdioCtl::write(const char *data, size_t bytes) const noexcept
+{
+    bmtv::terminalWrite(data, bytes);
+}
+
+void StdioCtl::read(char *data, size_t bytesToRead, size_t *pBytesReaded) const noexcept
+{
+    bmtv::terminalRead(data, bytesToRead, pBytesReaded);
 }
 
 

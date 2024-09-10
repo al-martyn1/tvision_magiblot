@@ -24,6 +24,8 @@
 #if !defined( __EVENT_CODES )
 #define __EVENT_CODES
 
+#include "ttimepoint.h"
+
 /* Event codes */
 
 const int evMouseDown = 0x0001;
@@ -349,11 +351,8 @@ inline void TEvent::getMouseEvent() noexcept
 #if defined( Uses_TTimerQueue ) && !defined( __TTimerQueue )
 #define __TTimerQueue
 
-#ifdef __BORLANDC__
-typedef uint32_t TTimePoint;
-#else
-typedef uint64_t TTimePoint;
-#endif
+using TTimePoint = tvision::TTimePoint;
+
 
 struct _FAR TTimer;
 

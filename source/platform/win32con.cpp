@@ -11,6 +11,9 @@
 #include <internal/utf8.h>
 #include <locale.h>
 
+#ifndef TV_BARE_METAL
+
+
 namespace tvision
 {
 
@@ -501,3 +504,5 @@ void getWin32Mouse(const MOUSE_EVENT_RECORD &MouseEvent, TEvent &ev, InputState 
 
 } // namespace tvision
 
+
+#endif // TV_BARE_METAL

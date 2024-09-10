@@ -18,6 +18,8 @@
 #include <sys/stat.h>
 #include <poll.h>
 
+#ifndef TV_BARE_METAL
+
 namespace tvision
 {
 
@@ -407,3 +409,5 @@ static bool write_subprocess(const char * const cmd[], TStringView text, int tim
 } // namespace tvision
 
 #endif // _TV_UNIX
+
+#endif // TV_BARE_METAL

@@ -10,6 +10,8 @@
 
 #include <time.h>
 
+#ifndef TV_BARE_METAL
+
 namespace tvision
 {
 
@@ -312,3 +314,6 @@ bool requestFar2lClipboard(StdioCtl &io, InputState &state) noexcept
 }
 
 } // namespace tvision
+
+
+#endif // TV_BARE_METAL

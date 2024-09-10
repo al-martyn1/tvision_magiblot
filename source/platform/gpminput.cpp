@@ -13,6 +13,8 @@
 #include <memory>
 #include <gpm.h>
 
+#ifndef TV_BARE_METAL
+
 namespace tvision
 {
 
@@ -106,3 +108,6 @@ bool GpmInput::getEvent(TEvent &ev) noexcept
 } // namespace tvision
 
 #endif // HAVE_GPM
+
+#endif // TV_BARE_METAL
+

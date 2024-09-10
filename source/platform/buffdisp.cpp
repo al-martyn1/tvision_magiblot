@@ -1,4 +1,6 @@
 #define Uses_TScreenCell
+#define Uses_THardwareInfo
+
 #include <tvision/tv.h>
 
 #include <internal/dispbuff.h>
@@ -6,9 +8,11 @@
 #include <internal/codepage.h>
 #include <internal/getenv.h>
 #include <internal/cursor.h>
-#include <chrono>
-using std::chrono::microseconds;
-using std::chrono::steady_clock;
+#include <tvision/hardware.h>
+
+// #include <chrono>
+// using std::chrono::microseconds;
+// using std::chrono::steady_clock;
 
 #ifdef _MSC_VER
 #define __builtin_expect(x, y) x
@@ -40,7 +44,12 @@ DisplayBuffer::DisplayBuffer() noexcept :
     #endif
     limitFPS = (fps > 0);
     if (limitFPS)
-        flushDelay = microseconds((int) 1e6/fps);
+    {
+        //flushDelay = microseconds((int) 1e6/fps);
+        flushDelay = 1000/fps;
+        if (flushDelay<2)
+            flushDelay = 2; // limit 500 FPS
+    }
 }
 
 DisplayBuffer::~DisplayBuffer()
@@ -79,7 +88,7 @@ void DisplayBuffer::clearScreen(DisplayStrategy &display) noexcept
 void DisplayBuffer::redrawScreen(DisplayStrategy &display) noexcept
 {
     screenTouched = true;
-    lastFlush = {};
+    lastFlush = THardwareInfo::getTickCountMs(); // 0; // {};
     memset(&flushBuffer[0], 0, flushBuffer.size()*sizeof(TScreenCell));
     for (auto &range : rowDamage)
         range = {0, size.x - 1};
@@ -127,7 +136,8 @@ bool DisplayBuffer::timeToFlush() noexcept
     // Avoid flushing faster than the maximum FPS.
     if (limitFPS)
     {
-        auto now = steady_clock::now();
+        //auto now = steady_clock::now();
+        auto now = THardwareInfo::getTickCountMs();
         if (now - lastFlush >= flushDelay)
             lastFlush = now;
         else

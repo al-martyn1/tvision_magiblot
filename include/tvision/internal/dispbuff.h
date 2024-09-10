@@ -5,7 +5,8 @@
 #include <tvision/tv.h>
 
 #include <vector>
-#include <chrono>
+//#include <chrono>
+#include "../ttimepoint.h"
 
 namespace tvision
 {
@@ -36,8 +37,10 @@ class DisplayBuffer
     int newCaretSize {0};
 
     bool limitFPS;
-    std::chrono::microseconds flushDelay {};
-    std::chrono::time_point<std::chrono::steady_clock> lastFlush {};
+    // std::chrono::microseconds flushDelay {};
+    // std::chrono::time_point<std::chrono::steady_clock> lastFlush {};
+    TTimePoint flushDelay = 0;
+    TTimePoint lastFlush  = 0;
 
     static DisplayBuffer *instance;
 #ifdef _WIN32

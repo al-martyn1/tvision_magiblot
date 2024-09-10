@@ -38,6 +38,10 @@
 
 #endif // __FLAT__
 
+//#include "system.h"
+#include "ttimepoint.h"
+
+
 struct TEvent;
 struct MouseEventType;
 
@@ -49,7 +53,10 @@ public:
     THardwareInfo() noexcept;
     ~THardwareInfo();
 
-    static uint32_t getTickCount() noexcept;
+    using TTimePoint = tvision::TTimePoint;
+
+    static TTimePoint getTickCount() noexcept;
+    static TTimePoint getTickCountMs() noexcept;
 
 #if defined( __FLAT__ )
 

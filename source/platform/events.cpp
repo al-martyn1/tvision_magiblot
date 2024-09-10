@@ -1,10 +1,17 @@
+#define Uses_THardwareInfo
+#include <tvision/hardware.h>
+
+using time_point = tvision::TTimePoint;
+
 #include <internal/events.h>
-#include <chrono>
-using time_point = std::chrono::steady_clock::time_point;
-using std::chrono::milliseconds;
-using std::chrono::nanoseconds;
-using std::chrono::duration_cast;
-using std::chrono::steady_clock;
+// #include <chrono>
+// using time_point = std::chrono::steady_clock::time_point;
+// using std::chrono::milliseconds;
+// using std::chrono::nanoseconds;
+// using std::chrono::duration_cast;
+// using std::chrono::steady_clock;
+
+
 
 #ifdef _TV_UNIX
 #include <unistd.h>
@@ -332,7 +339,8 @@ inline void EventWaiter::getReadyEvent(TEvent &ev) noexcept
 //!?
 static int pollDelayMs(time_point now, time_point end) noexcept
 {
-    return max(duration_cast<milliseconds>(nanoseconds(999999) + end - now).count(), 0);
+    // return max(duration_cast<milliseconds>(nanoseconds(999999) + end - now).count(), 0);
+    return end>now ? end-now : 0;
 }
 
 bool EventWaiter::getEvent(TEvent &ev) noexcept
@@ -347,12 +355,15 @@ bool EventWaiter::getEvent(TEvent &ev) noexcept
 
 void EventWaiter::waitForEvent(int ms) noexcept
 {
-    auto now = steady_clock::now(); //!?
-    const auto end = ms < 0 ? time_point::max() : now + milliseconds(ms);
+    //auto now = steady_clock::now(); //!?
+    auto now = THardwareInfo::getTickCountMs();
+    //const auto end = ms < 0 ? time_point::max() : now + milliseconds(ms);
+    const auto end = ms < 0 ? (time_point)-1 : now + (time_point)ms;
     while (!hasReadyEvent() && now <= end)
     {
         pollSources(ms < 0 ? -1 : pollDelayMs(now, end));
-        now = steady_clock::now();
+        // now = steady_clock::now();
+        now = THardwareInfo::getTickCountMs();
     }
 }
 

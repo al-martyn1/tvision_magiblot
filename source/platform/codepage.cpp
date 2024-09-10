@@ -28,6 +28,8 @@ constexpr char cp437toUtf8[256][4] =
     "≡", "±", "≥", "≤", "⌠", "⌡", "÷", "≈", "°", "∙", "·", "√", "ⁿ", "²", "■", " "
 };
 
+#ifndef TV_BARE_METAL
+// There is no cp850 support for bare metal
 constexpr char cp850toUtf8[256][4] =
 {
     "\0", "☺", "☻", "♥", "♦", "♣", "♠", "•", "◘", "○", "◙", "♂", "♀", "♪", "♫", "☼",
@@ -49,6 +51,7 @@ constexpr char cp850toUtf8[256][4] =
     // Note that <last row, first column> should be soft hyphen ("\u00AD"), but
     // it is often represented as a regular hyphen.
 };
+#endif
 
 // Provide a default value for 'currentToUtf8' in case it gets used before
 // calling 'init()'.
@@ -87,14 +90,16 @@ void CpTranslator::init() noexcept
     static const CpTable tables[] =
     {
         CpTable("437", cp437toUtf8),
+        #ifndef TV_BARE_METAL
         CpTable("850", cp850toUtf8),
+        #endif
     };
 
     static int init = [] ()
     {
         #ifdef TV_BARE_METAL
             #ifdef TVISION_CODEPAGE
-                TStringView cp = TStringView(TVISION_CODEPAGE);
+                TStringView cp = TStringView("437"); // TStringView(TVISION_CODEPAGE);
             #else
                 TStringView cp = TStringView("437");
             #endif

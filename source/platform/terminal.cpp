@@ -1,5 +1,7 @@
 #define Uses_TKeys
+#define Uses_THardwareInfo
 #include <tvision/tv.h>
+#include <tvision/hardware.h>
 
 #include <internal/terminal.h>
 #include <internal/far2l.h>
@@ -12,7 +14,7 @@
 #include <internal/base64.h>
 #include <internal/utf8.h>
 
-#include <chrono>
+// #include <chrono>
 
 namespace tvision
 {
@@ -904,22 +906,25 @@ void TermIO::consumeUnprocessedInput(StdioCtl &io, InputGetter &in, InputState &
 // Therefore, we print a DSR request and attempt to read events until we get a
 // response to it. This has to be done after disabling keyboard and mouse extensions.
 {
-    using namespace std::chrono;
-    auto timeout = milliseconds(200);
+    // using namespace std::chrono;
+    // auto timeout = milliseconds(200);
+    auto timeout = 200u;
 
     TStringView seq = "\x1B[6n"; // Device Status Report.
     io.write(seq.data(), seq.size());
 
     TEvent ev {};
     state.gotDsrResponse = false;
-    auto begin = steady_clock::now();
+    // auto begin = steady_clock::now();
+    auto begin = THardwareInfo::getTickCountMs();
     do
     {
         GetChBuf buf {in};
         parseEvent(buf, ev, state);
-    }
-    while ( !state.gotDsrResponse &&
-            (steady_clock::now() - begin <= timeout) );
+
+    } while( !state.gotDsrResponse && (THardwareInfo::getTickCountMs() - begin <= timeout));
+    // while ( !state.gotDsrResponse &&
+    //         (steady_clock::now() - begin <= timeout) );
 }
 
 } // namespace tvision

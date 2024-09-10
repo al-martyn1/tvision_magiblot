@@ -7,10 +7,10 @@
 #include <internal/platform.h>
 #include <internal/getenv.h>
 #include <iostream.h>
-#include <chrono>
-using std::chrono::duration_cast;
-using std::chrono::milliseconds;
-using std::chrono::steady_clock;
+// #include <chrono>
+// using std::chrono::duration_cast;
+// using std::chrono::milliseconds;
+// using std::chrono::steady_clock;
 
 TEvent THardwareInfo::eventQ[];
 size_t THardwareInfo::eventCount = 0;

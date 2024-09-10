@@ -5,13 +5,13 @@
 #if !defined( __BORLANDC__ )
 
     #ifndef TV_BARE_METAL
-        #include <chrono>
+        //#include <chrono>
     #else
-        namespace tvision {
-        namespace bmtv { // BareMetal TurboVision
-            uint32_t getTickCount(); // User must implement this. Tick count must be in milliseconds
-        } // namespace bmtv
-        } // namespace tvision
+        // namespace tvision {
+        // namespace bmtv { // BareMetal TurboVision
+        //     uint32_t getTickCount(); // User must implement this. Tick count must be in milliseconds
+        // } // namespace bmtv
+        // } // namespace tvision
     #endif
 
 #endif
@@ -19,14 +19,15 @@
 static TTimePoint systemTimeMs()
 {
 #if !defined( __FLAT__ )
-    return THardwareInfo::getTickCount()*55;
+    //return THardwareInfo::getTickCount()*55;
+    return THardwareInfo::getTickCountMs();
 #elif defined( __BORLANDC__ )
     return GetTickCount();
 #else
     #ifndef TV_BARE_METAL
         return GetTickCount64();
     #else
-        return tvision::bmtv::getTickCount();
+        return THardwareInfo::getTickCountMs();
     #endif
 #endif
 }

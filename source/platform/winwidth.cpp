@@ -3,6 +3,9 @@
 #include <internal/winwidth.h>
 #include <internal/utf8.h>
 
+
+#ifndef TV_BARE_METAL
+
 namespace tvision
 {
 
@@ -83,3 +86,5 @@ int WinWidth::calcWidth(uint32_t u32) noexcept
 } // namespace tvision
 
 #endif // _WIN32
+
+#endif // TV_BARE_METAL

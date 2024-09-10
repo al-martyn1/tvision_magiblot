@@ -13,10 +13,12 @@
 #include <internal/codepage.h>
 #include <internal/constmap.h>
 #include <string>
-#include <chrono>
+//#include <chrono>
 
-using std::chrono::milliseconds;
-using std::chrono::steady_clock;
+// using std::chrono::milliseconds;
+// using std::chrono::steady_clock;
+
+#ifndef TV_BARE_METAL
 
 namespace tvision
 {
@@ -480,3 +482,6 @@ bool NcursesInput::parseCursesMouse(TEvent &ev) noexcept
 } // namespace tvision
 
 #endif // HAVE_NCURSES
+
+#endif
+

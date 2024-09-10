@@ -448,11 +448,16 @@ BOOL THardwareInfo::requestClipboardText( void (&accept)( TStringView ) )
 
 #endif  // __BORLANDC__
 
-uint32_t THardwareInfo::getTickCount() noexcept
+THardwareInfo::TTimePoint THardwareInfo::getTickCount() noexcept
 {
     // To change units from ms to clock ticks.
     //   X ms * 1s/1000ms * 18.2ticks/s = X/55 ticks, roughly.
     return GetTickCount() / 55;
+}
+
+THardwareInfo::TTimePoint THardwareInfo::getTickCountMs() noexcept
+{
+    return GetTickCount();
 }
 
 BOOL __stdcall THardwareInfo::ctrlBreakHandler( DWORD dwCtrlType ) noexcept

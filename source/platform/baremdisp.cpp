@@ -29,7 +29,7 @@
 #endif
 
 #if !defined(TV_BARE_METAL_DISPLAY_SIZE_WIDTH)
-    #define TV_BARE_METAL_DISPLAY_SIZE_WIDTH         25
+    #define TV_BARE_METAL_DISPLAY_SIZE_WIDTH         80
 #endif
 
 
