@@ -51,11 +51,18 @@ inline void setCell(TScreenCell &cell, TCellChar ch, TColorAttr attr)
 //        meaning that it must not contain just zero-width characters).
 //     3. A special value that marks it as wide char trail.
 
+#if defined(TV_BARE_METAL)
+#include "umba/internal/umba/pushpack1.h"
+#endif
 struct TCellChar
 {
     enum : uint8_t { fWide = 0x1, fTrail = 0x2 };
 
+    #if defined(TV_BARE_METAL)
+    char _text[3];
+    #else
     char _text[15];
+    #endif
     uint8_t _flags;
 
     TCellChar() = default;
@@ -73,6 +80,9 @@ struct TCellChar
     constexpr inline char& operator[](size_t i);
     constexpr inline const char& operator[](size_t i) const;
 };
+#if defined(TV_BARE_METAL)
+#include "umba/internal/umba/packpop.h"
+#endif
 
 inline void TCellChar::moveChar(char ch)
 {
@@ -90,13 +100,21 @@ inline void TCellChar::moveInt(uint32_t mbc, bool wide)
 
 inline void TCellChar::moveStr(TStringView mbc, bool wide)
 {
+    #if defined(TV_BARE_METAL)
+    static_assert(sizeof(_text) >= 3, "");
+    #else
     static_assert(sizeof(_text) >= 4, "");
+    #endif
     if (mbc.size() <= 4)
     {
         memset(this, 0, sizeof(*this));
         switch (mbc.size())
         {
-            case 4: _text[3] = mbc[3]; _ATTR_FALLTHROUGH
+            case 4:
+                    #if !defined(TV_BARE_METAL)
+                    _text[3] = mbc[3]; 
+                    #endif
+                    _ATTR_FALLTHROUGH
             case 3: _text[2] = mbc[2]; _ATTR_FALLTHROUGH
             case 2: _text[1] = mbc[1]; _ATTR_FALLTHROUGH
             case 1: _text[0] = mbc[0];
@@ -131,7 +149,11 @@ constexpr inline void TCellChar::appendZeroWidth(TStringView mbc)
             _text[0] = ' ';
         switch (mbc.size())
         {
-            case 4: _text[sz + 3] = mbc[3]; _ATTR_FALLTHROUGH
+            case 4: 
+                    #if !defined(TV_BARE_METAL)
+                    _text[sz + 3] = mbc[3];
+                    #endif
+                    _ATTR_FALLTHROUGH
             case 3: _text[sz + 2] = mbc[2]; _ATTR_FALLTHROUGH
             case 2: _text[sz + 1] = mbc[1]; _ATTR_FALLTHROUGH
             case 1: _text[sz] = mbc[0];

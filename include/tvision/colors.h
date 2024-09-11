@@ -476,6 +476,7 @@ constexpr inline void TColorDesired::bitCast(uint32_t val)
 // colors set to 'default'. Therefore, a zero-initialized TColorAttr produces
 // visible text.
 
+
 const ushort
 
 // TColorAttr Style masks
@@ -484,6 +485,8 @@ const ushort
     slItalic        = 0x002,
     slUnderline     = 0x004,
     slBlink         = 0x008,
+
+    // The following attributes are discarded in the bare metal version
     slReverse       = 0x010, // Prefer using 'reverseAttribute()' instead.
     slStrike        = 0x020,
 
@@ -493,14 +496,34 @@ const ushort
 
 struct TAttrPair;
 
+
+#if defined(TV_BARE_METAL)
+#include "umba/internal/umba/pushpack1.h"
+#endif
 struct TColorAttr
 {
     using Style = ushort;
 
-    uint64_t
-        _style      : 10,
-        _fg         : 27,
-        _bg         : 27;
+
+protected:
+
+    #if !defined(TV_BARE_METAL)
+
+        uint64_t
+            _style      : 10,
+            _fg         : 27,
+            _bg         : 27;
+
+    #else
+
+        uchar _style;
+        uchar _fg:4;
+        uchar _bg:4;
+
+    #endif
+
+public:
+
 
     TColorAttr() = default;
     constexpr inline TColorAttr(int bios);
@@ -521,7 +544,66 @@ struct TColorAttr
     inline bool operator==(int bios) const;
     inline bool operator!=(int bios) const;
 
-};
+
+    constexpr TColorDesired getFore() const
+    {
+        #if !defined(TV_BARE_METAL)
+            TColorDesired color {};
+            color.bitCast(_fg);
+            return color;
+        #else
+            return TColorDesired(TColorBIOS(_fg));
+        #endif
+    }
+
+    constexpr void setFore(TColorDesired fg)
+    {
+        #if !defined(TV_BARE_METAL)
+            _fg = fg.bitCast();
+        #else
+            _fg = fg.toBIOS( true /* isForeground */ );
+        #endif
+    }
+
+    constexpr TColorDesired getBack() const
+    {
+        #if !defined(TV_BARE_METAL)
+            TColorDesired color {};
+            color.bitCast(_bg);
+            return color;
+        #else
+            return TColorDesired(TColorBIOS(_bg));
+        #endif
+    }
+
+    constexpr void setBack(TColorDesired bg)
+    {
+        #if !defined(TV_BARE_METAL)
+            _bg = color.bitCast();
+        #else
+            _bg = bg.toBIOS( false /* !isForeground */ );
+        #endif
+    }
+
+    constexpr ushort getStyle() const
+    {
+        return (ushort)_style;
+    }
+
+    constexpr void setStyle(ushort style)
+    {
+        #if !defined(TV_BARE_METAL)
+            _style = style;
+        #else
+            _style = (uchar)(style&0xFF);
+        #endif
+    }
+
+}; // struct TColorAttr
+#if defined(TV_BARE_METAL)
+#include "umba/internal/umba/packpop.h"
+#endif
+
 
 constexpr inline TColorDesired getFore(const TColorAttr &attr);
 constexpr inline TColorDesired getBack(const TColorAttr &attr);
@@ -593,36 +675,42 @@ inline bool TColorAttr::operator!=(int bios) const
 
 constexpr inline TColorDesired getFore(const TColorAttr &attr)
 {
-    TColorDesired color {};
-    color.bitCast(attr._fg);
-    return color;
+    // TColorDesired color {};
+    // color.bitCast(attr._fg);
+    // return color;
+    return attr.getFore();
 }
 
 constexpr inline TColorDesired getBack(const TColorAttr &attr)
 {
-    TColorDesired color {};
-    color.bitCast(attr._bg);
-    return color;
+    // TColorDesired color {};
+    // color.bitCast(attr._bg);
+    // return color;
+    return attr.getBack();
 }
 
 constexpr inline ushort getStyle(const TColorAttr &attr)
 {
-    return attr._style;
+    // return attr._style;
+    return attr.getStyle();
 }
 
 constexpr inline void setFore(TColorAttr &attr, TColorDesired color)
 {
-    attr._fg = color.bitCast();
+    // attr._fg = color.bitCast();
+    attr.setFore(color);
 }
 
 constexpr inline void setBack(TColorAttr &attr, TColorDesired color)
 {
-    attr._bg = color.bitCast();
+    // attr._bg = color.bitCast();
+    attr.setBack(color);
 }
 
 constexpr inline void setStyle(TColorAttr &attr, ushort style)
 {
-    attr._style = style;
+    // attr._style = style;
+    attr.setStyle(style);
 }
 
 constexpr inline TColorAttr reverseAttribute(TColorAttr attr)

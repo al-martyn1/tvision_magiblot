@@ -83,15 +83,17 @@ int BareMetalDisplay::getCaretSize() noexcept
 #ifndef TV_BARE_METAL_DISPLAY_GETCOLORCOUNT_IMPL_DISABLE
 int BareMetalDisplay::getColorCount() noexcept
 {
-    #if defined(TV_BARE_METAL_DISPLAY_COLORS_TRUE_COLOR)
-        return 256*256*256;
-    #elif defined(TV_BARE_METAL_DISPLAY_COLORS_256_COLORS)
-        return 256;
-    #elif defined(TV_BARE_METAL_DISPLAY_COLORS_8_COLORS)
-        return 8;
-    #else // Assume that display has 16 colors by default
-        return 16;
-    #endif
+    // #if defined(TV_BARE_METAL_DISPLAY_COLORS_TRUE_COLOR)
+    //     return 256*256*256;
+    // #elif defined(TV_BARE_METAL_DISPLAY_COLORS_256_COLORS)
+    //     return 256;
+    // #elif defined(TV_BARE_METAL_DISPLAY_COLORS_8_COLORS)
+    //     return 8;
+    // #else // Assume that display has 16 colors by default
+    //     return 16;
+    // #endif
+
+    return 16; // Only 16 colors allowed to reduce memory usage by embed apps
 }
 #endif
 
