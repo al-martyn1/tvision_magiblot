@@ -62,7 +62,7 @@ void *TDataCollection::readItem( ipstream& is )
 {
     void *obj;
 
-    obj = malloc(itemSize);
+    obj = tvision::tvMalloc(itemSize);
     is.readBytes(obj, itemSize);
     return obj;
 }
@@ -105,5 +105,5 @@ void TDataCollection::error( int code )
 
 void TDataCollection::freeItem( void *item )
 {
-    ::free(item);
+    ::tvision::tvFree(item);
 }

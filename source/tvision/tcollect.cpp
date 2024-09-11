@@ -51,7 +51,7 @@ TNSCollection::TNSCollection() noexcept :
 
 TNSCollection::~TNSCollection()
 {
-    ::free(items);
+    ::tvision::tvFree(items);
 }
 
 void TNSCollection::shutDown()
@@ -211,7 +211,7 @@ void TNSCollection::setLimit(ccIndex aLimit)
         void **aItems;
         if( aLimit > 0 )
             {
-            aItems = (void **) realloc( items, aLimit*sizeof(void *) );
+            aItems = (void **) tvision::tvRealloc( items, aLimit*sizeof(void *) );
             if( !aItems )
                 aLimit = 0;
             }
@@ -219,7 +219,7 @@ void TNSCollection::setLimit(ccIndex aLimit)
             {
             aItems = 0;
             aLimit = 0;
-            ::free(items);
+            ::tvision::tvFree(items);
             }
         items = aItems;
         limit = aLimit;

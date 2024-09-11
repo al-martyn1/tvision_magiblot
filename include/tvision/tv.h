@@ -684,6 +684,7 @@
 #define __INC_COLORS_H
 #endif
 
+#include <tvision/internal/tvmalloc.h>
 #include <tvision/config.h>
 #include <tvision/ttypes.h>
 #include <tvision/util.h>

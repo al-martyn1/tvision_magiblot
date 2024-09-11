@@ -69,7 +69,7 @@ TFileEditor::TFileEditor( const TRect& bounds,
 
 void TFileEditor::doneBuffer()
 {
-    free(buffer);
+    tvision::tvFree(buffer);
 }
 
 void TFileEditor::handleEvent( TEvent& event )
@@ -98,7 +98,7 @@ void TFileEditor::handleEvent( TEvent& event )
 
 void TFileEditor::initBuffer()
 {
-    buffer = (char *) malloc(bufSize);
+    buffer = (char *) tvision::tvMalloc(bufSize);
 }
 
 Boolean TFileEditor::loadFile() noexcept
@@ -231,16 +231,16 @@ Boolean TFileEditor::setBufSize( uint newSize )
         char *temp = buffer;
         /* Bypass safety pool to allocate buffer, but check for possible
            NULL return value. */
-        if( (buffer = (char *) malloc( newSize )) == 0 )
+        if( (buffer = (char *) tvision::tvMalloc( newSize )) == 0 )
             {
-            free(temp);
+            tvision::tvFree(temp);
             return False;
             }
         uint n = bufLen - curPtr + delCount;
         uint min = newSize < bufSize ? newSize : bufSize;
         memcpy( buffer, temp, min );
         memmove( &buffer[newSize - n], &temp[bufSize - n], n );
-        free(temp);
+        tvision::tvFree(temp);
         bufSize = newSize;
         gapLen = bufSize - bufLen;
         }

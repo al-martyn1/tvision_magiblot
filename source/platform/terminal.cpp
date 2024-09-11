@@ -682,7 +682,7 @@ ParseResult TermIO::parseDCS(GetChBuf &buf, InputState &state) noexcept
         // We only get a DCS in response to our request for kitty capabilities.
         if (strstr(s, "726561642d636c6970626f617264")) // 'read-clipboard'
             state.hasFullOsc52 = true;
-        free(s);
+        tvision::tvFree(s);
     }
     return Ignored;
 }
@@ -703,11 +703,11 @@ ParseResult TermIO::parseOSC(GetChBuf &buf, InputState &state) noexcept
                 else if (state.putPaste)
                 {
                     TStringView encoded = sv.substr(begin + 1 - &sv[0]);
-                    if (char *pDecoded = (char *) malloc((encoded.size() * 3)/4 + 3))
+                    if (char *pDecoded = (char *) tvision::tvMalloc((encoded.size() * 3)/4 + 3))
                     {
                         TStringView decoded = decodeBase64(encoded, pDecoded);
                         state.putPaste(decoded);
-                        free(pDecoded);
+                        tvision::tvFree(pDecoded);
                     }
                 }
             }
@@ -715,7 +715,7 @@ ParseResult TermIO::parseOSC(GetChBuf &buf, InputState &state) noexcept
         else if (sv.size() > 3 && sv.substr(0, 3) == "60;") // OSC 60
             if (strstr(&sv[3], "allowWindowOps"))
                 state.hasFullOsc52 = true;
-        free(s);
+        tvision::tvFree(s);
     }
     return Ignored;
 }
@@ -824,13 +824,13 @@ static bool setOsc52Clipboard(StdioCtl &io, TStringView text, InputState &state)
 {
     TStringView prefix = "\x1B]52;;";
     TStringView suffix = "\x07";
-    if (char *buf = (char *) malloc(prefix.size() + suffix.size() + (text.size() * 4)/3 + 4))
+    if (char *buf = (char *) tvision::tvMalloc(prefix.size() + suffix.size() + (text.size() * 4)/3 + 4))
     {
         memcpy(buf, prefix.data(), prefix.size());
         TStringView b64 = encodeBase64(text, buf + prefix.size());
         memcpy(buf + prefix.size() + b64.size(), suffix.data(), suffix.size());
         io.write(buf, prefix.size() + b64.size() + suffix.size());
-        free(buf);
+        tvision::tvFree(buf);
     }
     // Return false when there is no full OSC 52 support, even though we always
     // make the request. This way, we can still use the internal clipboard.
@@ -866,7 +866,7 @@ char *TermIO::readUntilBelOrSt(GetChBuf &buf) noexcept
 {
     size_t capacity = 1024;
     size_t len = 0;
-    if (char *s = (char *) malloc(capacity))
+    if (char *s = (char *) tvision::tvMalloc(capacity))
     {
         int prev = '\0';
         int c;
@@ -881,10 +881,10 @@ char *TermIO::readUntilBelOrSt(GetChBuf &buf) noexcept
             }
             if (capacity == len + 1)
             {
-                if (void *tmp = realloc(s, capacity *= 2))
+                if (void *tmp = tvision::tvRealloc(s, capacity *= 2))
                     s = (char *) tmp;
                 else
-                    s = (free(s), nullptr);
+                    s = (tvision::tvFree(s), nullptr);
             }
             if (s)
                 s[len++] = (char) c;

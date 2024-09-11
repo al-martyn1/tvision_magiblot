@@ -106,7 +106,7 @@ static void wslCopyPrepare(TSpan<char> &text) noexcept
 // When writing text to clip.exe, append a null character at the end
 // to work around https://github.com/microsoft/WSL/issues/4852.
 {
-    if (char *dstText = (char *) realloc(text.data(), text.size() + 1))
+    if (char *dstText = (char *) tvision::tvRealloc(text.data(), text.size() + 1))
     {
         dstText[text.size()] = '\0';
         text = {dstText, text.size() + 1};
@@ -123,9 +123,9 @@ static void wslPastePrepare(TSpan<char> &text) noexcept
     char *dstText;
     size_t dstLength = 0;
     // Each UTF-16 code unit may produce up to 3 UTF-8 bytes.
-    if ((dstText = (char *) malloc(srcLength * 3)))
+    if ((dstText = (char *) tvision::tvMalloc(srcLength * 3)))
         dstLength = utf16To8({srcText, srcLength}, dstText);
-    free(srcText);
+    tvision::tvFree(srcText);
     text = {dstText, dstLength};
 }
 #endif
@@ -174,7 +174,7 @@ static bool commandIsAvailable(const Command &cmd)
 
 static TSpan<char> copyStr(TStringView str) noexcept
 {
-    if (char *buf = (char *) malloc(str.size()))
+    if (char *buf = (char *) tvision::tvMalloc(str.size()))
     {
         memcpy(buf, str.data(), str.size());
         return {buf, str.size()};
@@ -191,7 +191,7 @@ bool UnixClipboard::setClipboardText(TStringView aText) noexcept
             if (cmd.prepare)
                 cmd.prepare(text);
             bool success = write_subprocess(cmd.argv, text, clipboardTimeoutMs);
-            free(text.data());
+            tvision::tvFree(text.data());
             if (success)
                 return true;
             break;
@@ -210,7 +210,7 @@ bool UnixClipboard::requestClipboardText(void (&accept)(TStringView)) noexcept
             if (text.data())
             {
                 accept(text);
-                free(text.data());
+                tvision::tvFree(text.data());
                 return true;
             }
             break;
@@ -320,7 +320,7 @@ static read_pipe_t read_pipe(int fd, int timeoutMs)
     if (flags == -1 || fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1)
         return {};
     enum { minReadSize = 4096 };
-    char *buf = (char *) malloc(minReadSize);
+    char *buf = (char *) tvision::tvMalloc(minReadSize);
     if (!buf)
         return {};
     size_t bytesRead = 0;
@@ -334,11 +334,11 @@ static read_pipe_t read_pipe(int fd, int timeoutMs)
             bytesRead += (size_t) r;
             if (capacity - bytesRead < minReadSize)
             {
-                if (void *tmp = realloc(buf, capacity *= 2))
+                if (void *tmp = tvision::tvRealloc(buf, capacity *= 2))
                     buf = (char *) tmp;
                 else
                 {
-                    free(buf);
+                    tvision::tvFree(buf);
                     return {nullptr, 0, true};
                 }
             }
@@ -390,7 +390,7 @@ static TSpan<char> read_subprocess(const char * const cmd[], const char * const 
     bool processOk = close_subprocess(process);
     if (processOk || res.size > 0)
         return {res.data, res.size};
-    free(res.data);
+    tvision::tvFree(res.data);
     return {};
 }
 

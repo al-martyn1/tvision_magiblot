@@ -477,7 +477,7 @@ Boolean TListDialog::saveForm(TDialog *f)
       return False;
 
     // Extract data from form. Don't use safety pool.
-    p = malloc(dataCollection->itemSize);
+    p = tvision::tvMalloc(dataCollection->itemSize);
     if (p == NULL)
         {
         TApplication::application->outOfMemory();
@@ -490,7 +490,7 @@ Boolean TListDialog::saveForm(TDialog *f)
     if ( (!(dataCollection->duplicates) && dataCollection->search(dataCollection->keyOf(p), i)) )
         if ( (((TForm*)f)->prevData == NULL) || (((TForm *)f)->prevData != dataCollection->at(i)) )
             {
-            free(p);
+            tvision::tvFree(p);
             messageBox("Duplicate keys are not allowed in this database. "
                        "Delete duplicate record before saving this form.",
                         mfError | mfOKButton);
@@ -508,7 +508,7 @@ Boolean TListDialog::saveForm(TDialog *f)
     dataCollection->insert(p);
     if (dataCollection->status != 0)
         {
-        free(p);
+        tvision::tvFree(p);
         TApplication::application->outOfMemory();
         return False;
         }

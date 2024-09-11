@@ -97,7 +97,7 @@ void TFileViewer::readFile( const char *fName )
         }
     else
         {
-        char *line = (char *) malloc(maxLineLength);
+        char *line = (char *) tvision::tvMalloc(maxLineLength);
         size_t lineSize = maxLineLength;
         char c;
         while( !lowMemory() &&
@@ -109,7 +109,7 @@ void TFileViewer::readFile( const char *fName )
             while ( !fileToView.eof() && c != '\n' && c != '\r' ) // read a whole line
                 {
                 if (i == lineSize)
-                    line = (char *) realloc(line, (lineSize *= 2));
+                    line = (char *) tvision::tvRealloc(line, (lineSize *= 2));
                 line[i++] = c ? c : ' ';
                 fileToView.get( c );
                 }
@@ -120,7 +120,7 @@ void TFileViewer::readFile( const char *fName )
             fileLines->insert( newStr( line ) );
             }
         isValid = True;
-        ::free(line);
+        ::tvision::tvFree(line);
         }
     limit.y = fileLines->getCount();
 }

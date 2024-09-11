@@ -10,7 +10,7 @@ namespace tvision
 
 inline AnsiDisplayBase::Buffer::~Buffer()
 {
-    free(head);
+    tvision::tvFree(head);
 }
 
 inline char *AnsiDisplayBase::Buffer::data() noexcept
@@ -45,7 +45,7 @@ inline void AnsiDisplayBase::Buffer::reserve(size_t extraCapacity) noexcept
     if (oldSize + extraCapacity > capacity)
     {
         capacity = max<size_t>(max<size_t>(4096, 2*capacity), capacity + extraCapacity);
-        if (!(head = (char *) realloc(head, capacity)))
+        if (!(head = (char *) tvision::tvRealloc(head, capacity)))
             abort();
         tail = head + oldSize;
     }

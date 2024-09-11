@@ -157,7 +157,7 @@ ParseResult parseFar2lAnswer(GetChBuf &buf, TEvent &, InputState &state) noexcep
         TStringView encoded(s);
         if (encoded == "ok")
             state.far2l.enabled = true;
-        else if (char *pDecoded = (char *) malloc((encoded.size() * 3)/4 + 3))
+        else if (char *pDecoded = (char *) tvision::tvMalloc((encoded.size() * 3)/4 + 3))
         {
             TStringView decoded = decodeBase64(encoded, pDecoded);
             if (decoded.size() >= 5 && decoded.back() == f2lClipGetData && state.putPaste)
@@ -176,9 +176,9 @@ ParseResult parseFar2lAnswer(GetChBuf &buf, TEvent &, InputState &state) noexcep
                     state.putPaste(text);
                 }
             }
-            free(pDecoded);
+            tvision::tvFree(pDecoded);
         }
-        free(s);
+        tvision::tvFree(s);
     }
     return res;
 }

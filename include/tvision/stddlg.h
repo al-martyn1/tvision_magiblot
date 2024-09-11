@@ -125,7 +125,7 @@ public:
 
     void remove( TSearchRec *item )
         { TSortedCollection::remove( item ); }
-    void free( TSearchRec *item )
+    void freeItem( TSearchRec *item )
         { TSortedCollection::free( item ); }
     void atInsert( ccIndex index, TSearchRec *item )
         { TSortedCollection::atInsert( index, item ); }

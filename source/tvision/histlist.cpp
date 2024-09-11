@@ -198,5 +198,5 @@ void initHistory() noexcept
 
 void doneHistory() noexcept
 {
-    ::free(historyBlock);
+    ::tvision::tvFree(historyBlock);
 }

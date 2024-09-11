@@ -660,7 +660,7 @@ void growBuffer( int size )
     do  {
         bufferSize = bufferSize ? 2*bufferSize : 4096;
         } while (size > bufferSize);
-    uchar *ptr = (uchar *) realloc(buffer, bufferSize);
+    uchar *ptr = (uchar *) tvision::tvRealloc(buffer, bufferSize);
     if (ptr)
         buffer = ptr;
     else

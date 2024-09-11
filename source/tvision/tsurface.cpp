@@ -34,7 +34,7 @@ TDrawSurface::TDrawSurface(TPoint aSize) noexcept :
 
 TDrawSurface::~TDrawSurface()
 {
-    ::free(data);
+    ::tvision::tvFree(data);
 }
 
 void TDrawSurface::resize(TPoint aSize)
@@ -45,11 +45,11 @@ void TDrawSurface::resize(TPoint aSize)
         size_t sz = newLength*sizeof(TScreenCell);
         void _FAR *newData;
         if (newLength <= dataLength)
-            newData = ::realloc(data, sz);
+            newData = ::tvision::tvRealloc(data, sz);
         else
         {
-            ::free(data);
-            newData = ::malloc(sz);
+            ::tvision::tvFree(data);
+            newData = ::tvision::tvMalloc(sz);
         }
         if (newData == 0 && newLength != 0)
             abort();
@@ -62,7 +62,7 @@ void TDrawSurface::resize(TPoint aSize)
     }
     else
     {
-        ::free(data);
+        ::tvision::tvFree(data);
         data = 0;
         dataLength = 0;
     }

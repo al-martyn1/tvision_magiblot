@@ -57,7 +57,7 @@ void TBufListEntry::destroy() noexcept
 
 void *TBufListEntry::operator new( size_t sz, size_t extra ) noexcept
 {
-    return malloc( sz + extra );
+    return tvision::tvMalloc( sz + extra );
 }
 
 void *TBufListEntry::operator new( size_t ) noexcept
@@ -67,7 +67,7 @@ void *TBufListEntry::operator new( size_t ) noexcept
 
 void TBufListEntry::operator delete( void *b ) noexcept
 {
-    free( b );
+    tvision::tvFree( b );
 }
 
 Boolean TBufListEntry::freeHead() noexcept
@@ -102,11 +102,11 @@ TVMemMgr::~TVMemMgr()
 void TVMemMgr::resizeSafetyPool( size_t sz ) noexcept
 {
     inited = 1;
-    free( safetyPool );
+    tvision::tvFree( safetyPool );
     if( sz == 0 )
         safetyPool = 0;
     else
-        safetyPool = malloc( sz );
+        safetyPool = tvision::tvMalloc( sz );
     safetyPoolSize = sz;
 }
 
@@ -143,7 +143,7 @@ void TVMemMgr::reallocateDiscardable( void *&adr, size_t sz ) noexcept
         TBufListEntry *entry = (TBufListEntry *)((char *)adr - sizeof(TBufListEntry));
         if( sz < entry->sz )
             {
-            void *p = ::realloc(entry, sizeof(TBufListEntry) + sz);
+            void *p = ::tvision::tvRealloc(entry, sizeof(TBufListEntry) + sz);
             if( p )
                 {
                 TBufListEntry *newEntry = (TBufListEntry *)p;
@@ -193,9 +193,9 @@ void * allocBlock( size_t sz )
     if( sz == 0 )
         sz = 1;
 
-    void *temp = malloc( sz );
+    void *temp = tvision::tvMalloc( sz );
     while( temp == 0 && TBufListEntry::freeHead() == True )
-        temp = malloc( sz );
+        temp = tvision::tvMalloc( sz );
     if( temp == 0 )
         {
         if( TVMemMgr::safetyPoolExhausted() )
@@ -203,7 +203,7 @@ void * allocBlock( size_t sz )
         else
             {
             TVMemMgr::resizeSafetyPool( 0 );
-            temp = malloc( sz );
+            temp = tvision::tvMalloc( sz );
             if( temp == 0 )
                 abort();
             }
@@ -241,7 +241,7 @@ static void deleteBlock( void *blk )
 #if !defined( NDEBUG )
     check( tmp );
 #endif
-    free( tmp );
+    tvision::tvFree( tmp );
     if( TVMemMgr::safetyPoolExhausted() )
         TVMemMgr::resizeSafetyPool();
 }
