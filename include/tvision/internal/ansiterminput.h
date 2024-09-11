@@ -141,6 +141,7 @@ public:
 
     void pollInput() noexcept override
     {
+        #ifdef TV_BARE_METAL
         //auto curReadTick = THardwareInfo::getTickCount();
         //if ()
         //void putData(const uchar* pData, size_t size)
@@ -163,6 +164,8 @@ public:
             parser.putTimeout();
 
         parser.putData((const uchar*)&buf[0], nReaded);
+
+        #endif
     }
 
 

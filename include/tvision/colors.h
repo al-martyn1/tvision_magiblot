@@ -579,7 +579,7 @@ public:
     constexpr void setBack(TColorDesired bg)
     {
         #if !defined(TV_BARE_METAL)
-            _bg = color.bitCast();
+            _bg = bg.bitCast();
         #else
             _bg = bg.toBIOS( false /* !isForeground */ );
         #endif
