@@ -237,7 +237,7 @@ static void pollHandles(PollData &pd, int ms) noexcept
     }
 }
 
-#else
+#else // !defined(_TV_UNIX) - _WIN32 eg
 
 static void pollHandles(PollData &pd, int ms) noexcept
 {

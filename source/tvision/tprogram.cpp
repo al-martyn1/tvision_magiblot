@@ -35,7 +35,7 @@ TMenuBar * _NEAR TProgram::menuBar = 0;
 TDeskTop * _NEAR TProgram::deskTop = 0;
 TProgram * _NEAR TProgram::application = 0;
 int _NEAR TProgram::appPalette = apColor;
-#ifdef TV_BARE_METAL
+#ifndef TV_BARE_METAL
     int _NEAR TProgram::eventTimeout = 20; // ms, 50 wake-ups per second.
 #else
     int _NEAR TProgram::eventTimeout =  0; // bare metal apps are usually runs in infinite loop, polls TurboVision in it, and make some other job. We need to don't delay this loop.
