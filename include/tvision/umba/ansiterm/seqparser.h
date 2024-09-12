@@ -187,7 +187,7 @@ class AnsiTerminalKeySequenceParser
                     return processInputByte(ch);
                 }
 
-                TrieIndexType nextTrieIndex = trieFindNext(trieIndex, ch); // lokking for maximal len sequence while valid
+                TrieIndexType nextTrieIndex = trieFindNext(trieIndex, ch); // looking for maximal len sequence while valid
                 if (nextTrieIndex!=umba::tokenizer::trie_index_invalid)
                 {
                     const auto &trieNode = getAnsiTerminalSequencesTrie()[nextTrieIndex];
@@ -209,31 +209,35 @@ class AnsiTerminalKeySequenceParser
                 // sequence continuation not found
 
                 const auto &trieNode = getAnsiTerminalSequencesTrie()[trieIndex];
-                if (trieNode.payload!=umba::tokenizer::payload_invalid)
+                if (trieNode.payload!=umba::tokenizer::payload_invalid && seqLen>1)
                 {
                     validKeyHandler((ushort)trieNode.payload, getControlKeyStateForKnownKeyCode((ushort)trieNode.payload));
                     resetState();
                     return processInputByte(ch);
                 }
 
-                if (seqLen==2)
+                if (seqLen==1) // Not including current char
                 {
                     uchar prevCh = (uchar)trieNode.token;
                     // check for escaped normal code
-                    if (prevCh!=esc_code && prevCh<=0x7F)
+                    if (prevCh==esc_code && ch>=0 && ch<=0x7F)
                     {
-                        const auto &taCharInfo = getTerminalAsciiCharInfo()[prevCh];
+                        const auto &taCharInfo = getTerminalAsciiCharInfo()[ch];
     
                         ushort keyCode         = taCharInfo.remapKeyCode;
                         ushort controlKeyState = taCharInfo.controlKeyState;
     
                         if (keyCode==0) // No keyCode remap
                         {
-                            keyCode = (ushort)(((ushort)taCharInfo.scanCode) << 8) | ((ushort)prevCh);
+                            keyCode = (ushort)(((ushort)taCharInfo.scanCode) << 8) | ((ushort)ch);
 
                             if (controlKeyState==kbShift)
                             {
                                 controlKeyState = kbShift | kbAltShift | kbLeftAlt; // ???
+                            }
+                            else
+                            {
+                                controlKeyState = kbLeftAlt; // ???
                             }
                         }
 
@@ -345,6 +349,7 @@ public:
             return; // processInputByte(ch);
         }
 
+        #if 0
         if (seqLen==2)
         {
             uchar prevCh = (uchar)trieNode.token;
@@ -371,6 +376,7 @@ public:
                 return; // processInputByte(ch);
             }
         }
+        #endif
 
         // look for valid sequence and invalid tail
         // restore input sequence by backtracing trie
