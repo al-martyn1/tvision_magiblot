@@ -44,7 +44,15 @@ inline void AnsiDisplayBase::Buffer::reserve(size_t extraCapacity) noexcept
     size_t oldSize = size();
     if (oldSize + extraCapacity > capacity)
     {
-        capacity = max<size_t>(max<size_t>(4096, 2*capacity), capacity + extraCapacity);
+        #ifdef TV_BARE_METAL
+        constexpr static const size_t minCapacity =  256;
+        #else
+        constexpr static const size_t minCapacity = 4096;
+        #endif
+
+        capacity = max<size_t>( max<size_t>(minCapacity, 2*capacity)
+                              , capacity + extraCapacity
+                              );
         if (!(head = (char *) tvision::tvRealloc(head, capacity)))
             abort();
         tail = head + oldSize;
@@ -77,17 +85,29 @@ inline void AnsiDisplayBase::bufWriteCSI2(uint a, uint b, char F) noexcept
     buf.push(F);
 }
 
+void AnsiDisplayBase::flushAuto()
+{
+    #ifdef TV_BARE_METAL
+    //!!! Important: flush buffer 1) to prevent buffer growth 2) limit UART buffer size for sending multiple small portions instead of one big
+    auto sz = buf.size();
+    if (sz>=512)
+        lowlevelFlush();
+    #endif
+}
+
 void AnsiDisplayBase::clearAttributes() noexcept
 {
     buf.reserve(4);
     buf.push(CSI "0m");
     lastAttr = {};
+    flushAuto();
 }
 
 void AnsiDisplayBase::clearScreen() noexcept
 {
     buf.reserve(4);
     buf.push(CSI "2J");
+    flushAuto();
 }
 
 static char *convertAttributes(const TColorAttr &, TermAttr &, const TermCap &, char*) noexcept;
@@ -97,13 +117,35 @@ void AnsiDisplayBase::lowlevelWriteChars( TStringView chars, TColorAttr attr,
 {
     buf.reserve(256);
     buf.tail = convertAttributes(attr, lastAttr, termcap, buf.tail);
+
+    #ifndef TV_BARE_METAL
     buf.push(chars);
+    flushAuto();
+    #else
+    size_t szChunk  = 110;
+    size_t startPos = 0;
+    while( true /* startPos<chars.size() */ )
+    {
+        size_t rest = chars.size() - startPos;
+        if (!rest || rest>chars.size())
+            break;
+        size_t chunkSize = std::min(rest, szChunk);
+        buf.push(chars.substr(startPos, chunkSize));
+        flushAuto();
+        startPos += chunkSize;
+        chunkSize = 128;
+    }
+    #endif
+
+    // constexpr TStringView substr(size_t pos) const;
+    // constexpr TStringView substr(size_t pos, size_t n) const;
 }
 
 void AnsiDisplayBase::lowlevelMoveCursorX(uint x, uint) noexcept
 {
     // Optimized case where the cursor only moves horizontally.
     bufWriteCSI1(x + 1, 'G');
+    flushAuto();
 }
 
 void AnsiDisplayBase::lowlevelMoveCursor(uint x, uint y) noexcept
@@ -111,6 +153,7 @@ void AnsiDisplayBase::lowlevelMoveCursor(uint x, uint y) noexcept
     buf.reserve(32);
 //     buf.push('\r'); // Make dumps readable.
     bufWriteCSI2(y + 1, x + 1, 'H');
+    flushAuto();
 }
 
 void AnsiDisplayBase::lowlevelFlush() noexcept

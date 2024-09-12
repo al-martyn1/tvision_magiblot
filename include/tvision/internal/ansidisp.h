@@ -114,6 +114,8 @@ protected:
 
     ~AnsiDisplayBase();
 
+    void flushAuto();
+
     void clearAttributes() noexcept;
     void clearScreen() noexcept;
 
