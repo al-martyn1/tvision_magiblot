@@ -28,7 +28,10 @@ TGroup::TGroup( const TRect& bounds ) noexcept :
     TView(bounds), current( 0 ), last( 0 ), phase( phFocused ), buffer( 0 ),
     lockFlag( 0 ), endState( 0 )
 {
-    options |= ofSelectable | ofBuffered;
+    options |= ofSelectable;
+    #ifndef TV_BARE_METAL
+        options |= ofBuffered;
+    #endif
     clip = getExtent();
     eventMask = 0xFFFF;
 }
