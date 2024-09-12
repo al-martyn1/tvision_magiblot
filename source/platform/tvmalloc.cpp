@@ -1,4 +1,4 @@
-#if !defined(TV_BARE_METAL)
+#if !defined(TV_USE_CUSTOM_MALLOC)
 
 // For common version use standard malloc/realloc/free
 
