@@ -107,9 +107,11 @@ protected:
 
     Boolean tileColumnsFirst;
 
-private:
+public: // for compatibility with old code
 
     static const char _NEAR defaultBkgrnd;
+
+private:
 
     virtual const char *streamableName() const
         { return name; }

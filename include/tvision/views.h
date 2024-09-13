@@ -57,6 +57,7 @@ const ushort
     cmChDir         = 35,
     cmDosShell      = 36,
     cmCloseAll      = 37,
+    cmSuspend       = 38, // standard in old apps
 
 //  TView State masks
 
