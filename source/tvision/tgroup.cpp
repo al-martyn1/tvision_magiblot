@@ -29,8 +29,9 @@ TGroup::TGroup( const TRect& bounds ) noexcept :
     lockFlag( 0 ), endState( 0 )
 {
     options |= ofSelectable;
-    #ifndef TV_BARE_METAL
+    #if !defined(TV_BARE_METAL) || defined(TV_BARE_METAL_DISPLAY_BUFFERED)
         options |= ofBuffered;
+    #else
     #endif
     clip = getExtent();
     eventMask = 0xFFFF;
