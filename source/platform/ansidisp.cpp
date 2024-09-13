@@ -88,9 +88,13 @@ inline void AnsiDisplayBase::bufWriteCSI2(uint a, uint b, char F) noexcept
 void AnsiDisplayBase::flushAuto()
 {
     #ifdef TV_BARE_METAL
-    //!!! Important: flush buffer 1) to prevent buffer growth 2) limit UART buffer size for sending multiple small portions instead of one big
+    //!!! Important: flush buffer 1) to prevent buffer too much growth 2) limit UART buffer size for sending multiple small portions instead of one big
     auto sz = buf.size();
+    #ifdef TV_BARE_METAL_ANSI_DISPLAY_FLUSH_LIMIT
+    if (sz>=TV_BARE_METAL_ANSI_DISPLAY_FLUSH_LIMIT)
+    #else
     if (sz>=512)
+    #endif
         lowlevelFlush();
     #endif
 }
