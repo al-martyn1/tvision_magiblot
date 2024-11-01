@@ -1,3 +1,5 @@
 /doxygen.cfg
 /doxy
 /doxygen_html.log
+/tv_all_uses.h.out
+/tv_all_uses.cfg
