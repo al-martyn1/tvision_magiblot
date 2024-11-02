@@ -28,6 +28,7 @@ Boolean TCheckBoxes::mark(int item)
 void TCheckBoxes::press(int item)
 {
     value = value^(1 << item);
+    message( owner, evCommand, cmCheckBoxChecked, this );
 }
 
 #if !defined(NO_STREAMABLE)

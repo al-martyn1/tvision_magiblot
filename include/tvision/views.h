@@ -195,6 +195,13 @@ const ushort
 
     cmScreenChanged     = 57,
 
+
+//  TCheckBoxes
+
+    cmCheckBoxChecked   = 58,
+
+
+
 //  Event masks
 
     positionalEvents    = evMouse & ~evMouseWheel,
