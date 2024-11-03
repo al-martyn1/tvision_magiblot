@@ -15,6 +15,9 @@
 #define Uses_TKeys
 #define Uses_TDialog
 #define Uses_TEvent
+#define Uses_TDeskTop
+#define Uses_TProgram
+#define Uses_TDeskTop
 #include <tvision/tv.h>
 
 // TMultiCheckboxes flags
@@ -98,6 +101,11 @@ Boolean TDialog::valid( ushort command )
         return True;
     else
         return TGroup::valid( command );
+}
+
+ushort TDialog::showModal()
+{
+    return TProgram::deskTop->execView(this);
 }
 
 #if !defined(NO_STREAMABLE)

@@ -110,6 +110,7 @@ public:
     virtual TPalette& getPalette() const;
     virtual void handleEvent( TEvent& event );
     virtual Boolean valid( ushort command );
+    virtual ushort showModal();
 
 private:
 
