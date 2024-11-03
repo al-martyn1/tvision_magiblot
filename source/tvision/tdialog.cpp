@@ -108,6 +108,21 @@ ushort TDialog::showModal()
     return TProgram::deskTop->execView(this);
 }
 
+void TDialog::closeDialog(TEvent& event)
+{
+    endModal(event.message.command);
+    clearEvent(event);
+}
+
+void TDialog::closeDialog(TEvent& event, ushort code)
+{
+    event.what = evCommand;
+    event.message.command = code;
+    closeDialog(event);
+}
+
+
+
 #if !defined(NO_STREAMABLE)
 
 TStreamable *TDialog::build()

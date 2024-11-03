@@ -111,6 +111,8 @@ public:
     virtual void handleEvent( TEvent& event );
     virtual Boolean valid( ushort command );
     virtual ushort showModal();
+    virtual void closeDialog(TEvent& event);
+    virtual void closeDialog(TEvent& event, ushort code);
 
 private:
 
