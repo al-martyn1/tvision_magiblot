@@ -190,15 +190,16 @@ const ushort
 //  TListViewer messages
 
     cmListItemSelected  = 56,
+    cmListItemActivated = 57, // dbl clicked
 
 //  TProgram messages
 
-    cmScreenChanged     = 57,
+    cmScreenChanged     = 58,
 
 
 //  TCheckBoxes
 
-    cmCheckBoxChecked   = 58,
+    cmCheckBoxChecked   = 59,
 
 
 

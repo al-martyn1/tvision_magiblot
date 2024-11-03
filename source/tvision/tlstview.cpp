@@ -180,6 +180,9 @@ void TListViewer::focusItem( short item )
                 topItem = item - item % size.y - (size.y * (numCols-1));
             }
         }
+
+    message( owner, evBroadcast, cmListItemSelected, this );
+
 }
 
 void TListViewer::focusItemNum( short item )
@@ -356,7 +359,7 @@ void TListViewer::handleEvent( TEvent& event )
 
 void TListViewer::selectItem( short )
 {
-    message( owner, evBroadcast, cmListItemSelected, this );
+    message( owner, evBroadcast, cmListItemActivated, this );
 }
 
 void TListViewer::setRange( short aRange )
