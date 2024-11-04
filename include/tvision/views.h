@@ -404,12 +404,15 @@ public:
     virtual void getEvent( TEvent& event );
     virtual void handleEvent( TEvent& event );
     virtual void putEvent( TEvent& event );
+    virtual void putCommand( ushort command, void *infoPtr=0 );
 
     static Boolean commandEnabled( ushort command ) noexcept;
     static void disableCommands( TCommandSet& commands ) noexcept;
     static void enableCommands( TCommandSet& commands ) noexcept;
+    static void enableCommands( TCommandSet& commands, Boolean bEnable ) noexcept;
     static void disableCommand( ushort command ) noexcept;
     static void enableCommand( ushort command ) noexcept;
+    static void enableCommand( ushort command, Boolean bEnable) noexcept;
     static void getCommands( TCommandSet& commands ) noexcept;
     static void setCommands( TCommandSet& commands ) noexcept;
     static void setCmdState( TCommandSet& commands, Boolean enable ) noexcept;

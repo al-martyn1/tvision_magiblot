@@ -311,6 +311,15 @@ void TProgram::putEvent( TEvent & event )
     pending = event;
 }
 
+void TProgram::putCommand( ushort command, void *infoPtr )
+{
+    TEvent event;
+    event.what = evCommand;
+    event.message.command = command;
+    event.message.infoPtr = (void*)infoPtr;
+    putEvent(event);
+}
+
 void TProgram::run()
 {
     execute();

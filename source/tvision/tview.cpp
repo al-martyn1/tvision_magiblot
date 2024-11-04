@@ -422,6 +422,17 @@ void TView::enableCommand( ushort command ) noexcept
     curCommandSet += command;
 }
 
+void TView::enableCommands( TCommandSet& commands, Boolean bEnable ) noexcept
+{
+    return bEnable ? enableCommands(commands) : disableCommands(commands);
+}
+
+void TView::enableCommand( ushort command, Boolean bEnable) noexcept
+{
+    return bEnable ? enableCommand(command) : disableCommand(command);
+}
+
+
 void TView::endModal( ushort command )
 {
     if( TopView() != 0 )
@@ -696,6 +707,15 @@ void TView::putEvent( TEvent& event )
 {
     if( owner != 0 )
         owner->putEvent(event);
+}
+
+void TView::putCommand( ushort command, void *infoPtr )
+{
+    TEvent event;
+    event.what = evCommand;
+    event.message.command = command;
+    event.message.infoPtr = (void*)infoPtr;
+    putEvent(event);
 }
 
 void TView::putInFrontOf( TView *Target )

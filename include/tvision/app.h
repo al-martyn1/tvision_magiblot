@@ -271,6 +271,7 @@ public:
     virtual void initScreen();
     virtual void outOfMemory();
     virtual void putEvent( TEvent& event );
+    virtual void putCommand( ushort command, void *infoPtr=0 );
     virtual void run();
     virtual TWindow* insertWindow(TWindow*);
     void setScreenMode( ushort mode );
