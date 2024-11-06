@@ -4,7 +4,7 @@
 /*                                                                         */
 /*   defines the classes TDialog, TInputLine, TButton, TCluster,           */
 /*   TRadioButtons, TCheckBoxes, TMultiCheckBoxes, TStaticText,            */
-/*   TParamText, TLabel, THistoryViewer, and THistoryWindow.               */
+/*   TParamText, TLabel, TInfoLabel, THistoryViewer, and THistoryWindow.   */
 /*                                                                         */
 /* ------------------------------------------------------------------------*/
 /*
@@ -887,6 +887,103 @@ inline opstream& operator << ( opstream& os, TLabel* cl )
     { return os << (TStreamable *)cl; }
 
 #endif  // Uses_TLabel
+
+
+/* ---------------------------------------------------------------------- */
+/*      class TInfoLabel                                                  */
+/*                                                                        */
+/*      Palette layout                                                    */
+/*        1 = Normal text  (black) 0(x7)                                  */
+/*        2 = Info text (Green)      x2                                   */
+/*        3 = Warning text (Light Magenta/Light Red) xD/xC/               */
+/*        4 = Error  x4                                                   */
+/*                                                                        */
+/*                                                                        */
+/*      class TProgram                                                    */
+/*                                                                        */
+/*      Palette layout                                                    */
+/*          1 = TBackground                                               */
+/*       2- 7 = TMenuView and TStatusLine                                 */
+/*       8-15 = TWindow(Blue)                                             */
+/*      16-23 = TWindow(Cyan)                                             */
+/*      24-31 = TWindow(Gray)                                             */
+/*      32-63 = TDialog                                                   */
+/* ---------------------------------------------------------------------- */
+
+#if defined( Uses_TInfoLabel ) && !defined( __TInfoLabel )
+#define __TInfoLabel
+
+class _FAR TRect;
+struct _FAR TEvent;
+class _FAR TView;
+
+
+//  TInfoLabel Info Kinds
+
+const unsigned
+
+    ilkNormal       = 0x0000,
+    ilkInfo         = 0x0001,
+    ilkWarning      = 0x0002,
+    ilkError        = 0x0003;
+
+
+class TInfoLabel : public TStaticText
+{
+
+public:
+
+    TInfoLabel( const TRect& bounds, TStringView aText ) noexcept;
+
+    virtual void draw();
+    virtual TPalette& getPalette() const;
+    virtual void shutDown();
+
+    virtual void setText( TStringView aText );
+    virtual unsigned getInfoKind();
+    virtual void setInfoKind(unsigned aInfoKind);
+
+    virtual uchar getForceColor();
+    virtual void setForceColor(uchar aColor);
+
+    virtual TColorAttr mapColor( uchar index ) noexcept;
+
+protected:
+
+    TView* getTopOwner();
+
+    unsigned infoKind = 0;
+    uchar    forceColor = 0;
+
+private:
+
+    virtual const char *streamableName() const
+        { return name; }
+
+protected:
+
+    TInfoLabel( StreamableInit ) noexcept;
+    virtual void write( opstream& );
+    virtual void *read( ipstream& );
+
+public:
+
+    static const char * const _NEAR name;
+    static TStreamable *build();
+
+};
+
+inline ipstream& operator >> ( ipstream& is, TInfoLabel& cl )
+    { return is >> (TStreamable&)cl; }
+inline ipstream& operator >> ( ipstream& is, TInfoLabel*& cl )
+    { return is >> (void *&)cl; }
+
+inline opstream& operator << ( opstream& os, TInfoLabel& cl )
+    { return os << (TStreamable&)cl; }
+inline opstream& operator << ( opstream& os, TInfoLabel* cl )
+    { return os << (TStreamable *)cl; }
+
+#endif  // Uses_TInfoLabel
 
 
 /* ---------------------------------------------------------------------- */

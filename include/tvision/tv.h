@@ -369,6 +369,11 @@
 #define __INC_DIALOGS_H
 #endif
 
+#if defined( Uses_TInfoLabel )
+#define Uses_TStaticText
+#define __INC_DIALOGS_H
+#endif
+
 #if defined( Uses_TParamText )
 #define Uses_TStaticText
 #define __INC_DIALOGS_H
