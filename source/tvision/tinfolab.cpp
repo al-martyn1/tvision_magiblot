@@ -33,13 +33,14 @@
 // 3 8D ("\x3C") lred on light blue - warning
 // 3 8E ("\x35") dmagenta on light blue - warning
 // 4 8A ("\x4F") white on red - error
-// 5 8B ("\x38") gray on light blue - disable
+// 5 7E ("\x38") gray on light gray - disabled normal kind
+// 6 8B ("\x38") gray on light blue - disabled info, warning or error kind
 
 
 // #define cpLabel "\x02\x88\x89\x8A\x8B"
 // #define cpLabel "\x02\x8C\x89\x8A\x8B"
 // #define cpLabel "\x02\x8C\x8D\x8A\x8B"
-#define cpLabel "\x02\x8C\x8E\x8A\x8B"
+#define cpLabel "\x02\x8C\x8E\x8A\x7E\x8B"
 
 TInfoLabel::TInfoLabel( const TRect& bounds, TStringView aText) noexcept :
     TStaticText( bounds, aText )
@@ -137,9 +138,13 @@ void TInfoLabel::draw()
         {
             ushort colorIndex = 0;
             if (state&sfDisabled) // sfDisabled sfVisible
-                colorIndex = 4;
+            {
+                colorIndex = infoKind==ilkNormal ? 5 : 6;
+            }
             else
+            {
                 colorIndex = (ushort)(infoKind&0x03)+1;
+            }
             color = getColor(colorIndex);
         }
     }
@@ -147,9 +152,16 @@ void TInfoLabel::draw()
     {
         ushort colorIndex = 0;
         if (state&sfDisabled) // sfDisabled sfVisible
-            colorIndex = 4;
+        {
+            //colorIndex = infoKind==ilkNormal ? 5 : 6;
+            colorIndex = 6;
+            if (infoKind==ilkNormal)
+                colorIndex = 5;
+        }
         else
+        {
             colorIndex = (ushort)(infoKind&0x03)+1;
+        }
         color = getColor(colorIndex);
     }
 
