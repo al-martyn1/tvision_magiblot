@@ -70,6 +70,18 @@ TTerminal::TTerminal( const TRect& bounds,
     showCursor();
 }
 
+void TTerminal::clear()
+{
+    setLimit( 0, 1 );
+    scrollTo( 0, 0 );
+    delta.x = delta.y = limit.x = limit.y = 0;
+    queFront = 0;
+    queBack  = 0;
+    // hScrollBar->setValue(0)
+    // vScrollBar->setValue(0)
+    drawView();
+
+}
 
 TTerminal::~TTerminal()
 {

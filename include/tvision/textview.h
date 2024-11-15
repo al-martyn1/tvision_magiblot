@@ -85,6 +85,7 @@ public:
     ushort nextLine( ushort pos );
     ushort prevLines( ushort pos, ushort lines );
     Boolean queEmpty();
+    virtual void clear();
 
 protected:
 
