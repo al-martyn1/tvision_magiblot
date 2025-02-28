@@ -112,6 +112,9 @@ public:
     static const ushort CtrlCvt[89];
     static const ushort AltCvt[89];
 
+    static void finalize() noexcept;
+
+
 private:
 
     static BOOL __stdcall ctrlBreakHandler( DWORD dwCtrlType ) noexcept;

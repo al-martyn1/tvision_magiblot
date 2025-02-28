@@ -44,6 +44,12 @@ THardwareInfo::~THardwareInfo()
     platf = nullptr;
 }
 
+void THardwareInfo::finalize() noexcept
+{
+    delete platf;
+    platf = nullptr;
+}
+
 void THardwareInfo::setCaretSize( ushort size ) noexcept { platf->setCaretSize(size); }
 void THardwareInfo::setCaretPosition( ushort x, ushort y ) noexcept { platf->setCaretPosition(x, y); }
 ushort THardwareInfo::getCaretSize() noexcept { return platf->getCaretSize(); }

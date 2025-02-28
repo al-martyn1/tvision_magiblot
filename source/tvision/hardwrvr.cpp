@@ -184,6 +184,12 @@ THardwareInfo::~THardwareInfo()
     CloseHandle( consoleHandle[cnOutput] );
 }
 
+void THardwareInfo::finalize() noexcept
+{
+    restoreConsole();
+    CloseHandle( consoleHandle[cnOutput] );
+}
+
 void THardwareInfo::setUpConsole()
 {
     if( pSetConsoleActiveScreenBuffer )
